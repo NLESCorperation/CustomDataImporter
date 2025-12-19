@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src *;">
+    <title>SOTI Custom Data Importer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"
+                style="width:24px; color:var(--primary-color);">
+                <path fill-rule="evenodd"
+                    d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                    clip-rule="evenodd" />
+            </svg>
+            Device Groups
+        </div>
+
+        <div class="search-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="search-icon">
+                <path fill-rule="evenodd"
+                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                    clip-rule="evenodd" />
+            </svg>
+            <input type="text" id="group-search" placeholder="Search...">
+        </div>
+
+        <div class="selection-toolbar">
+            <div class="selection-actions">
+                <button id="select-all-btn" class="text-btn">Select All</button>
+                <button id="deselect-all-btn" class="text-btn">None</button>
+            </div>
+            <span id="selection-count" class="selection-count">0</span>
+        </div>
+
+        <div class="group-list" id="group-list">
+            <div class="placeholder-message">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                </svg>
+                <p>Connect to server<br>to view groups</p>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="d-flex" style="justify-content: space-between;">
+                <button id="refresh-groups-btn" class="btn btn-secondary btn-icon" disabled title="Refresh Groups">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" style="width:18px;height:18px;">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="theme-selector-container">
+                <div class="theme-option" id="theme-system" onclick="setTheme('system')">Auto</div>
+                <div class="theme-option" id="theme-light" onclick="setTheme('light')">Light</div>
+                <div class="theme-option" id="theme-dark" onclick="setTheme('dark')">Dark</div>
+                <!-- Hidden select for JS compatibility -->
+                <select id="theme-select" style="display:none">
+                    <option value="system">System</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar-resizer"></div>
+
+    <div id="main">
+        <div class="header-row">
+            <div class="title-group">
+                <h1>SOTI Mobicontrol Custom Data Importer</h1>
+                <p class="subtitle">Manage custom data properties for device groups</p>
+            </div>
+
+            <div class="connection-status" id="connection-status">
+                <span class="status-dot disconnected"></span>
+                <span id="connection-text">Not Connected</span>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab" data-tab="settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 0 1 0 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.581-.495.644-.869l.214-1.281Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                    Server
+                </div>
+                <div class="tab active" data-tab="manual">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                    </svg>
+                    Manual Entry
+                </div>
+                <div class="tab" data-tab="xsight-agent">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                    XSight Agent information
+                </div>
+                <div class="tab" data-tab="group-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    Current Group Data
+                </div>
+                <div class="tab" data-tab="list">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                    </svg>
+                    List of Custom Data <span id="staged-count-tab" class="badge badge-sm">(0)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Server Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <div class="form-grid">
+                    <div class="full-width">
+                        <div class="form-group">
+                            <label for="profile-select">Saved Profiles</label>
+                            <div class="d-flex">
+                                <select id="profile-select" style="flex:1">
+                                    <option value="">-- Select Saved Profile --</option>
+                                </select>
+                                <button id="new-profile-btn" class="btn btn-secondary btn-icon"
+                                    title="New Server Connection (Clear Fields)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" style="width:18px;height:18px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                </button>
+                                <button id="rename-profile-btn" class="btn btn-secondary btn-icon" title="Rename Profile">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" style="width:18px;height:18px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                                    </svg>
+                                </button>
+                                <button id="delete-profile-btn" class="btn btn-danger btn-icon" title="Delete Profile">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" style="width:18px;height:18px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="full-width">
+                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 10px 0 20px 0;">
+                        <h4 style="margin-bottom: 16px; color: var(--text-main);">Connection Details</h4>
+                    </div>
+
+                    <div class="full-width">
+                        <div class="form-group">
+                            <label for="server-url">Server URL</label>
+                            <input type="url" id="server-url" placeholder="https://your-server.mobicontrol.cloud">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="client-id">Client ID</label>
+                        <input type="text" id="client-id" placeholder="API Client ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-secret">Client Secret</label>
+                        <input type="password" id="client-secret" placeholder="API Client Secret">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="API Username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Password">
+                    </div>
+                </div>
+
+                <div class="action-footer">
+                    <button id="save-profile-btn" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" style="width:18px;height:18px;">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+                        </svg>
+                        Save Profile
+                    </button>
+                    <button id="connect-btn" class="btn btn-primary">
+                        Connect Server
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" style="width:18px;height:18px;">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Datapoint Entry Tab -->
+        <div id="manual" class="tab-content active">
+            <div class="card">
+                <!-- Android Family Restriction Notice -->
+                <div class="android-restriction-banner">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:20px;height:20px;flex-shrink:0;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    <div class="android-restriction-content">
+                        <strong>Android Family Only • INI Files • STRING Type</strong>
+                        <span class="android-restriction-text">INI File: <code style="background: var(--bg-base); padding: 2px 6px; border-radius: 3px; font-family: monospace;">/sdcard/Download/customdata.ini</code></span>
+                    </div>
+                </div>
+
+                <!-- Predefined Data Picker Section -->
+                <div class="predefined-picker-section">
+                    <div class="picker-header">
+                        <h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:20px;height:20px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+                            </svg>
+                            Predefined Data Points
+                        </h3>
+                        <div class="picker-actions">
+                            <input type="text" id="predefined-search" placeholder="Search data points..." class="picker-search">
+                            <div class="picker-selection-btns">
+                                <button id="select-all-predefined-btn" class="text-btn">Select All</button>
+                                <button id="select-none-predefined-btn" class="text-btn">None</button>
+                            </div>
+                            <button id="expand-all-btn" class="btn btn-secondary btn-sm">Expand All</button>
+                            <button id="collapse-all-btn" class="btn btn-secondary btn-sm">Collapse All</button>
+                        </div>
+                    </div>
+                    
+                    <div class="picker-content" id="predefined-picker-content">
+                        <!-- Sections will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="picker-footer">
+                        <span id="predefined-selected-count">0 selected</span>
+                        <button id="add-selected-predefined-btn" class="btn btn-primary" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:18px;height:18px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Add Selected to List
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="section-divider">
+                    <span>OR ADD MANUALLY</span>
+                </div>
+                
+                <!-- Hidden type selector (fixed to INI) -->
+                <select id="prop-type" style="display: none;">
+                    <option value="ini" selected>INI File</option>
+                </select>
+
+                <!-- Custom Data Entry Form -->
+                <div class="manual-entry-form">
+                    <!-- Row 1: Name -->
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="prop-name">Custom Data Name *</label>
+                            <input type="text" id="prop-name" placeholder="e.g. DeviceConfig_Timeout">
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden data type (always STRING) -->
+                    <select id="prop-datatype" style="display: none;">
+                        <option value="STRING" selected>STRING</option>
+                    </select>
+
+                    <!-- INI File Configuration Section -->
+                    <div id="dynamic-fields">
+                        <div id="fields-ini" class="ini-config-section">
+                            <div class="section-label">INI File Configuration</div>
+                            <div class="form-row three-col">
+                                <div class="form-group">
+                                    <label for="ini-file">File Name *</label>
+                                    <input type="text" id="ini-file" value="/sdcard/Download/customdata.ini" placeholder="config.ini">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ini-section">Section *</label>
+                                    <input type="text" id="ini-section" placeholder="Settings">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ini-val-name">Key Name *</label>
+                                    <input type="text" id="ini-val-name" placeholder="timeout">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Description -->
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="prop-desc">Description (optional)</label>
+                            <input type="text" id="prop-desc" placeholder="Brief description of this custom data point">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-footer" style="margin-top: 20px;">
+                    <div></div>
+                    <button id="add-manual-btn" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" style="width:18px;height:18px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add Custom Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- XSight Agent Information Tab -->
+        <div id="xsight-agent" class="tab-content">
+            <div class="card">
+                <!-- XSight Agent Info Banner -->
+                <div class="android-restriction-banner">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:20px;height:20px;flex-shrink:0;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                    <div class="android-restriction-content">
+                        <strong>XSight Agent Data Points • INI File • STRING Type</strong>
+                        <span class="android-restriction-text">INI File: <code style="background: var(--bg-base); padding: 2px 6px; border-radius: 3px; font-family: monospace;">/sdcard/Download/XSightReport_AllJson.ini</code></span>
+                    </div>
+                </div>
+
+                <!-- XSight Agent Predefined Data Points Section -->
+                <div class="predefined-picker-section">
+                    <div class="picker-header">
+                        <h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:20px;height:20px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+                            </svg>
+                            XSight Agent Data Points
+                        </h3>
+                        <div class="picker-actions">
+                            <input type="text" id="xsight-search" placeholder="Search data points..." class="picker-search">
+                            <div class="picker-selection-btns">
+                                <button id="xsight-select-all-btn" class="text-btn">Select All</button>
+                                <button id="xsight-select-none-btn" class="text-btn">None</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="picker-content" id="xsight-picker-content">
+                        <!-- XSight Data Points List (sorted alphabetically by display name) -->
+                        <div class="picker-items-list" id="xsight-items-list">
+                            <label class="picker-item"><input type="checkbox" data-key="mcAgentVersion" /><span>MC Agent Version</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="osVersion" /><span>OS Version</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="activeCollectors" /><span>XSight Active Collectors</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="activeCookers" /><span>XSight Active Cookers</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="activeLiveview" /><span>XSight Active Liveview</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="agentVersion" /><span>XSight Agent Version</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="batteryCapacity" /><span>XSight Battery Capacity</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.collectPeriod" /><span>XSight Configuration Collect Period</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.configurations" /><span>XSight Configuration Configurations</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.cookFrom" /><span>XSight Configuration Cook From</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.cookPeriod" /><span>XSight Configuration Cook Period</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.delivery" /><span>XSight Configuration Delivery</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.deliveryWindowLength" /><span>XSight Configuration Delivery Window Length</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.lastCollection" /><span>XSight Configuration Last Collection</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.nextCollection" /><span>XSight Configuration Next Collection</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.oldAppPreferences" /><span>XSight Configuration Old App Preferences</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="configuration.profileName" /><span>XSight Configuration Profile Name</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="connection" /><span>XSight Connection</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="lastCookStatus" /><span>XSight Cook Status</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="databaseSize" /><span>XSight Database Size</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="deviceId" /><span>XSight Device ID</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="keepRawData" /><span>XSight Keep Raw Data</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="lastUpload" /><span>XSight Last Upload</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="liveSupport.authState" /><span>XSight Live Support Auth State</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="liveSupport.installState" /><span>XSight Live Support Install State</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="liveSupport.networkState" /><span>XSight Live Support Network State</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="liveSupport.serviceBoundState" /><span>XSight Live Support Service Bound State</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="liveSupport.trustState" /><span>XSight Live Support Trust State</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="liveSupport.webSocketState" /><span>XSight Live Support Web Socket State</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="nextUpload" /><span>XSight Next Upload</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="serverAddress" /><span>XSight Server Address</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="smartSocketStatus" /><span>XSight Smart Socket Status</span></label>
+                            <label class="picker-item"><input type="checkbox" data-key="smartSocketVersion" /><span>XSight Smart Socket Version</span></label>
+                        </div>
+                    </div>
+                    
+                    <div class="picker-footer">
+                        <span id="xsight-selected-count">0 selected</span>
+                        <button id="add-xsight-selected-btn" class="btn btn-primary" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:18px;height:18px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Add Selected to List
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Group Data Tab (Read Only) -->
+        <div id="group-info" class="tab-content">
+            <div class="card">
+                <div class="header-row" style="margin-bottom: 20px;">
+                    <div class="title-group">
+                        <h3 id="group-info-title">Current Group Data</h3>
+                        <div class="subtitle">Read-only view of data currently assigned to this group.</div>
+                    </div>
+                    <button id="refresh-group-btn" class="btn btn-secondary btn-icon" title="Refresh Data">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" style="width:16px;height:16px;">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- CustomData Subsection -->
+                <div style="margin-bottom: 40px;">
+                    <h4 style="margin-bottom: 16px; font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                        CustomData 
+                        <span id="customdata-count" style="font-size: 14px; font-weight: 500; color: var(--text-secondary);">0 items</span>
+                    </h4>
+                    <div class="data-table-container">
+                        <table class="data-table" id="group-info-table">
+                            <thead>
+                                <tr>
+                                    <th>Property Name</th>
+                                </tr>
+                            </thead>
+                            <tbody id="group-info-body">
+                                <!-- Populated via JS -->
+                                <tr>
+                                    <td colspan="1" class="placeholder-cell">Select a group to view data</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Custom Attributes Subsection -->
+                <div>
+                    <h4 style="margin-bottom: 16px; font-size: 18px; font-weight: 600;">Custom Attributes</h4>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Edit values directly and click Save to update in SOTI.</p>
+                    <div class="data-table-container">
+                        <table class="data-table" id="group-attributes-table">
+                            <thead>
+                                <tr>
+                                    <th>Attribute Name</th>
+                                    <th>Value</th>
+                                    <th style="width: 80px; text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="group-attributes-body">
+                                <!-- Populated via JS -->
+                                <tr>
+                                    <td colspan="3" class="placeholder-cell">Select a group to view data</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- List of Custom Data Tab -->
+        <div id="list" class="tab-content">
+            <div class="card">
+                <!-- Data Grid -->
+                <div class="d-flex justify-between align-center mb-3" style="flex-wrap: wrap; gap: 8px;">
+                    <h3 style="margin: 0;">Custom Data <span id="staged-count"
+                            style="color:var(--text-secondary); font-size:0.9rem; font-weight:normal;">(0)</span>
+                    </h3>
+                    <button id="clear-all-btn" class="btn btn-secondary btn-sm">Clear All</button>
+                </div>
+
+                <div class="data-grid-container" style="margin-bottom: 20px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Property Name</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th style="width: 60px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-body">
+                            <tr class="empty-row">
+                                <td colspan="4" class="empty-message text-center"
+                                    style="padding: 40px; color: var(--text-disabled);">
+                                    No data added yet. Use "New Datapoint Entry" or "Import File" to add data.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="action-footer"
+                    style="background: var(--bg-surface); padding: 16px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+                    <div></div>
+                    <div style="display: flex; gap: 8px; flex-wrap: nowrap;">
+                        <button id="apply-btn" class="btn btn-primary" disabled style="white-space: nowrap;">
+                            Apply to Groups
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <div id="status-bar" class="status-bar">
+        <span id="status-text">Ready</span>
+    </div>
+
+    <!-- Browser-compatible API mock (for Visual Browser) -->
+    <script>
+        // Proxy fetch calls to SOTI APIs through our server to avoid CORS issues
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options = {}) {
+            // Check if this is a SOTI API call (contains /MobiControl/api/)
+            if (typeof url === 'string' && url.includes('/MobiControl/api/')) {
+                // Route through our proxy
+                const proxyUrl = `/api/proxy?url=${encodeURIComponent(url)}`;
+                const proxyOptions = {
+                    ...options,
+                    headers: {
+                        ...options.headers,
+                        'X-Original-Method': options.method || 'GET'
+                    }
+                };
+                // Remove method from options since we're using GET for the proxy request
+                // but forwarding the original method via header
+                return originalFetch(proxyUrl, proxyOptions);
+            }
+            // For non-SOTI URLs, use original fetch
+            return originalFetch(url, options);
+        };
+
+        // Mock Electron API for browser compatibility
+        if (typeof window.api === 'undefined') {
+            window.api = {
+                credentials: {
+                    save: async (profileName, credentials) => {
+                        const key = `profile_${profileName}`;
+                        localStorage.setItem(key, JSON.stringify(credentials));
+                        const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                        if (!profiles.includes(profileName)) {
+                            profiles.push(profileName);
+                            localStorage.setItem('profiles', JSON.stringify(profiles));
+                        }
+                        return { success: true };
+                    },
+                    get: async (profileName) => {
+                        const key = `profile_${profileName}`;
+                        const data = localStorage.getItem(key);
+                        return data ? JSON.parse(data) : null;
+                    },
+                    list: async () => {
+                        return JSON.parse(localStorage.getItem('profiles') || '[]');
+                    },
+                    delete: async (profileName) => {
+                        const key = `profile_${profileName}`;
+                        localStorage.removeItem(key);
+                        const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                        const index = profiles.indexOf(profileName);
+                        if (index > -1) {
+                            profiles.splice(index, 1);
+                            localStorage.setItem('profiles', JSON.stringify(profiles));
+                        }
+                        return { success: true };
+                    }
+                }
+            };
+        }
+    </script>
+
+    <!-- Save Profile Modal (outside main for proper z-index stacking) -->
+    <div class="modal-overlay" id="save-profile-modal" style="display: none;">
+        <div class="modal">
+            <h3>Save Connection Profile</h3>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 16px;">
+                Enter a friendly name for this connection. Credentials will be stored securely in your system keychain.
+            </p>
+            <div class="form-group">
+                <label for="profile-name">Profile Name</label>
+                <input type="text" id="profile-name" placeholder="e.g., Benelux Production, US Test Server">
+            </div>
+            <div class="action-footer">
+                <button id="cancel-save-btn" class="btn btn-secondary">Cancel</button>
+                <button id="confirm-save-btn" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:16px;height:16px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+                    </svg>
+                    Save Profile
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Profile Modal -->
+    <div class="modal-overlay" id="rename-profile-modal" style="display: none;">
+        <div class="modal">
+            <h3>Rename Profile</h3>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 16px;">
+                Enter a new name for this profile.
+            </p>
+            <div class="form-group">
+                <label for="rename-profile-name">New Profile Name</label>
+                <input type="text" id="rename-profile-name" placeholder="e.g., Benelux Production">
+            </div>
+            <div class="action-footer">
+                <button id="cancel-rename-btn" class="btn btn-secondary">Cancel</button>
+                <button id="confirm-rename-btn" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:16px;height:16px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                    </svg>
+                    Rename
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts (must be after all DOM elements) -->
+    <script src="renderer.js"></script>
+    <script>
+        // Inline script to handle theme switching in UI to match new structure
+        function setTheme(theme) {
+            const select = document.getElementById('theme-select');
+            select.value = theme;
+            // Dispatch event so renderer listener catches it
+            select.dispatchEvent(new Event('change'));
+
+            // Visual update
+            document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
+            document.getElementById(`theme-${theme}`).classList.add('active');
+        }
+
+        // Init visual state
+        // (The actual logic is in renderer.js, this just sets the button state)
+        const currentTheme = localStorage.getItem('theme') || 'system';
+        document.getElementById(`theme-${currentTheme}`).classList.add('active');
+    </script>
+
+    <!-- Watermark - Fixed at bottom right of viewport -->
+    <div class="powered-by">Powered by Homebrew</div>
+</body>
+
+</html>
