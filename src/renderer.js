@@ -2672,9 +2672,9 @@ elements.addSelectedPredefinedBtn?.addEventListener('click', () => {
             valName: key,
             dataType: 'STRING',
             description: `${formattedSection} - ${displayName}`,
-            _originalKey: key  // Store original key for technical reference
+            _originalKey: key  // Store original key for technical reference (used for SOTI API Name field)
         };
-        // Use formatted displayName as the name (for SOTI API Name field)
+        // Use formatted displayName as the display key, but _originalKey will be used for the SOTI API Name field
         addDataItem(displayName, itemValue, true);
         addedCount++;
     });
