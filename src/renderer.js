@@ -593,8 +593,10 @@ async function ensureCustomDataDefinitionExists(serverUrl, token, item) {
     
     // Build the definition based on the item type
     // Use capital field names to match existing SOTI API format
+    // Use _originalKey for Name field to ensure technical identifier consistency
+    // (matches duplicate check logic and Expression field which uses valName)
     let definition = {
-        Name: item.key,  // Capital N to match existing format
+        Name: item.value?._originalKey || item.key,  // Use technical identifier, fallback to item.key for manual entries
         Description: value.description || '',
         PhysicalType: physicalType,  // SOTI CustomData only accepts 'String'
         DeviceFamily: deviceFamily,  // This is the device platform (AndroidPlus, etc.)

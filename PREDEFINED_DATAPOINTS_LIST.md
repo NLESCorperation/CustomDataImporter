@@ -18,7 +18,7 @@ When adding these datapoints to SOTI MobiControl via the API:
 
 ## Standard Predefined Datapoints
 
-**INI File:** `/sdcard/Download/customdata.ini`  
+**INI File:** `/sdcard/Download/customdata.ini`
 **Data Type:** STRING
 
 ### APPS Section
