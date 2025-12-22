@@ -505,14 +505,25 @@ async function ensureCustomDataDefinitionExists(serverUrl, token, item) {
     }
 
     // Check if CustomData definition exists, create if not
+    // Use _originalKey if available (for predefined/XSight items) to match against technical names
+    // Otherwise use item.key (for manually entered items)
+    const keyForComparison = item.value?._originalKey || item.key;
     const definitions = await getCustomDataDefinitions(serverUrl, token);
-    const exists = definitions.some(d =>
-        (d.name || d.Name || '').toLowerCase() === item.key.toLowerCase()
-    );
+    const exists = definitions.some(d => {
+        const defName = (d.name || d.Name || '').toLowerCase();
+        const comparisonKey = keyForComparison.toLowerCase();
+        // Check against both the technical key and the display name to catch duplicates in either format
+        return defName === comparisonKey || defName === item.key.toLowerCase();
+    });
 
     if (exists) {
-        console.log(`CustomData definition already exists: ${item.key}`);
-        return { created: false, name: item.key, exists: true };
+        const existingDef = definitions.find(d => {
+            const defName = (d.name || d.Name || '').toLowerCase();
+            return defName === keyForComparison.toLowerCase() || defName === item.key.toLowerCase();
+        });
+        const existingName = existingDef?.name || existingDef?.Name || keyForComparison;
+        console.log(`CustomData definition already exists: ${existingName} (checked against ${item.key})`);
+        return { created: false, name: existingName, exists: true };
     }
 
     // Check existing definitions to determine correct format, DeviceFamily/PhysicalType values, and expression format
