@@ -2,7 +2,6 @@ const { app, BrowserWindow, ipcMain, dialog, net, session } = require('electron'
 const path = require('path');
 const fs = require('fs');
 const keytar = require('keytar');
-const ini = require('ini');
 
 // Service name for keytar (OS keychain)
 const SERVICE_NAME = 'SotiCustomDataImporter';

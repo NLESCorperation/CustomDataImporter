@@ -2444,6 +2444,13 @@ async function fetchAndDisplayGroupData(groupPath) {
 // ==================== Predefined Data Picker ====================
 const PREDEFINED_INI_FILE = '/sdcard/Download/customdata.ini';
 
+// Helper function to add spaces before capital letters
+// Example: "DefaultLauncher" -> "Default Launcher"
+// Example: "DistanceToAP" -> "Distance To A P"
+function formatKeyForDisplay(key) {
+    return key.replace(/([a-z])([A-Z])/g, '$1 $2');
+}
+
 const PREDEFINED_DATA = {
     APPS: ['DefaultLauncher', 'PlayServicesVersion', 'WebViewVersion'],
     BATTERY: ['BatteryCurrent', 'BatteryCycleCount', 'BatteryHealth', 'BatteryPlugType', 'BatteryStatus', 'BatteryTemperature', 'BatteryVoltage'],
@@ -2500,7 +2507,7 @@ function renderPredefinedPicker(searchQuery = '') {
                             ${allSelected ? '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>' : ''}
                             ${someSelected ? '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" /></svg>' : ''}
                         </div>
-                        <span class="picker-section-name">${section}</span>
+                        <span class="picker-section-name">${formatKeyForDisplay(section)}</span>
                     </div>
                     <span class="picker-section-count">${selectedInSection}/${filteredKeys.length}</span>
                 </div>
@@ -2515,7 +2522,7 @@ function renderPredefinedPicker(searchQuery = '') {
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                     </svg>
                                 </div>
-                                <span class="picker-item-name">${key}</span>
+                                <span class="picker-item-name">${formatKeyForDisplay(key)}</span>
                             </div>
                         `;
                     }).join('')}
@@ -2643,16 +2650,19 @@ elements.addSelectedPredefinedBtn?.addEventListener('click', () => {
     let addedCount = 0;
     selectedPredefinedItems.forEach(itemId => {
         const [section, key] = itemId.split(':');
-        const name = key; // Use the key name as the custom data name
+        const displayName = formatKeyForDisplay(key);
+        const formattedSection = formatKeyForDisplay(section);
         const itemValue = {
             type: 'ini',
             file: PREDEFINED_INI_FILE,
             section: section,
             valName: key,
             dataType: 'STRING',
-            description: `${section} - ${key}`
+            description: `${formattedSection} - ${displayName}`,
+            _originalKey: key  // Store original key for technical reference
         };
-        addDataItem(name, itemValue, true);
+        // Use formatted displayName as the name (for SOTI API Name field)
+        addDataItem(displayName, itemValue, true);
         addedCount++;
     });
 
@@ -2821,7 +2831,10 @@ elements.addXsightSelectedBtn?.addEventListener('click', () => {
             dataType: 'STRING',
             description: `XSight Agent - ${displayName}`
         };
-        addDataItem(key, itemValue, true);
+        // Use displayName as the name (for SOTI API Name field), but keep key for technical reference
+        // Store the original key in the value object for reference if needed
+        itemValue._originalKey = key;
+        addDataItem(displayName, itemValue, true);
         addedCount++;
     });
 
@@ -2908,7 +2921,7 @@ function renderDataGrid() {
             console.error('Invalid item structure in renderDataGrid:', item);
             return `
                 <tr style="background-color: var(--error-bg, #fee);">
-                    <td>${escapeHtml(item.key || 'Unknown')}</td>
+                    <td>${escapeHtml(formatKeyForDisplay(item.key || 'Unknown'))}</td>
                     <td><span class="badge error">ERROR</span></td>
                     <td>Invalid structure - please remove and re-add</td>
                     <td>
@@ -2919,7 +2932,7 @@ function renderDataGrid() {
         }
         return `
             <tr>
-                <td>${escapeHtml(item.key)}</td>
+                <td>${escapeHtml(item.value.description || formatKeyForDisplay(item.key))}</td>
                 <td><span class="badge ${item.value.type}">${item.value.type.toUpperCase()}</span></td>
                 <td>${formatValueDetails(item.value)}</td>
                 <td>
@@ -3188,6 +3201,48 @@ function initSidebarResizer() {
     });
 }
 
+// ==================== Settings Menu ====================
+function countTotalDatapoints() {
+    // Count predefined datapoints
+    let predefinedCount = 0;
+    for (const [section, keys] of Object.entries(PREDEFINED_DATA)) {
+        predefinedCount += keys.length;
+    }
+    
+    // Count XSight datapoints (hardcoded in HTML, count checkboxes)
+    const xsightCheckboxes = document.querySelectorAll('#xsight-items-list input[type="checkbox"]');
+    const xsightCount = xsightCheckboxes.length;
+    
+    return predefinedCount + xsightCount;
+}
+
+function updateDatapointCount() {
+    const countElement = document.getElementById('datapoint-count');
+    if (countElement) {
+        const totalCount = countTotalDatapoints();
+        countElement.textContent = totalCount;
+    }
+}
+
+function initSettingsMenu() {
+    const settingsMenu = document.querySelector('.settings-menu');
+    const settingsToggle = document.getElementById('settings-menu-toggle');
+    const settingsContent = document.getElementById('settings-menu-content');
+    
+    if (!settingsMenu || !settingsToggle) return;
+    
+    // Start with menu collapsed
+    settingsMenu.classList.remove('expanded');
+    
+    // Toggle on click
+    settingsToggle.addEventListener('click', () => {
+        settingsMenu.classList.toggle('expanded');
+    });
+    
+    // Update datapoint count
+    updateDatapointCount();
+}
+
 // ==================== Initialize ====================
 document.addEventListener('DOMContentLoaded', async () => {
     // Initialize sidebar resizer
@@ -3203,6 +3258,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Init Theme
     applyTheme(state.theme);
+    
+    // Initialize settings menu
+    initSettingsMenu();
 });
 
 // Helper
