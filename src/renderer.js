@@ -7,7 +7,7 @@ const state = {
     selectedGroups: [],
     dataItems: [],
     currentProfile: null,
-    theme: localStorage.getItem('theme') || 'system',
+    theme: localStorage.getItem('theme') || 'light', // Default to light theme (Apple-style)
     currentlyViewedGroup: null, // Track which group's data is currently displayed
     expandedGroups: new Set() // Track which groups are expanded in the tree
 };
