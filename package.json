@@ -1,7 +1,7 @@
 {
   "name": "soti-custom-data-importer",
   "version": "1.0.1",
-  "description": "Cross-platform SOTI Custom Data Importer",
+  "description": "Cross-platform Electron desktop app for creating, managing, and deploying Custom Data definitions and Custom Attributes to SOTI MobiControl device groups",
   "author": "Yannick Weijenberg",
   "license": "MIT",
   "repository": {
