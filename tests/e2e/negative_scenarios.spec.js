@@ -15,10 +15,7 @@ test.describe('Negative Scenarios', () => {
     });
 
     test('Invalid Credentials shows error toast', async () => {
-        // Mock 401 response for token
-        await page.route('**/MobiControl/api/token', async route => {
-            await route.fulfill({ status: 401, body: 'Unauthorized' });
-        });
+        await appPage.setMockScenario('invalidCredentials');
 
         // Navigate to Server tab and fill fields
         await page.click('[data-tab="settings"]');
@@ -38,17 +35,7 @@ test.describe('Negative Scenarios', () => {
     });
 
     test('API 500 Error during Group Load is handled gracefully', async () => {
-        // Mock successful token
-        await page.route('**/MobiControl/api/token', async route => {
-            await route.fulfill({
-                status: 200,
-                body: JSON.stringify({ access_token: 'mock-token', token_type: 'Bearer' })
-            });
-        });
-
-        await page.route('**/MobiControl/api/devicegroups**', async route => {
-            await route.fulfill({ status: 500, body: 'Internal Server Error' });
-        });
+        await appPage.setMockScenario('groupError');
 
         // Navigate to Server tab and connect
         await page.click('[data-tab="settings"]');

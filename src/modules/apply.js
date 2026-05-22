@@ -103,13 +103,13 @@ export function initApply() {
 
             if (failCount === 0) {
                 updateStatusBar(`Successfully applied ${state.dataItems.length} items to all ${successCount} groups`, 'success');
-                showToast(`✅ Applied changes to ${successCount} group${successCount === 1 ? '' : 's'}!`, 'success');
+                showToast(`Applied changes to ${successCount} group${successCount === 1 ? '' : 's'}`, 'success');
 
                 state.dataItems = [];
                 renderDataGrid();
             } else {
                 updateStatusBar(`Completed with errors. Success: ${successCount}, Failed: ${failCount}`, 'warning');
-                showToast(`⚠️ Finished: ${successCount} succeeded, ${failCount} failed.`, 'warning');
+                showToast(`Finished: ${successCount} succeeded, ${failCount} failed`, 'warning');
             }
 
             setTimeout(() => hideStatusBar(), 5000);
@@ -120,6 +120,7 @@ export function initApply() {
             showToast(`System error: ${error.message}`, 'error');
             setTimeout(() => hideStatusBar(), 5000);
         } finally {
+            setButtonLoading(elements.applyBtn, false);
             updateApplyButton();
         }
     });

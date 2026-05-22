@@ -1,7 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-// Expose safe APIs to renderer process
-contextBridge.exposeInMainWorld('api', {
+const exposedApi = {
     // Credentials
     credentials: {
         save: (profileName, credentials) => ipcRenderer.invoke('credentials:save', profileName, credentials),
@@ -33,4 +32,13 @@ contextBridge.exposeInMainWorld('api', {
         request: (serverUrl, token, endpoint, method, body) => 
             ipcRenderer.invoke('soti:request', serverUrl, token, endpoint, method, body)
     }
-});
+};
+
+if (process.env.E2E_MOCK_API === '1') {
+    exposedApi.test = {
+        setMockScenario: (scenario, overrides) => ipcRenderer.invoke('test:setMockScenario', scenario, overrides)
+    };
+}
+
+// Expose safe APIs to renderer process
+contextBridge.exposeInMainWorld('api', exposedApi);

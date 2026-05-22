@@ -15,29 +15,8 @@ test.describe('Critical User Flows', () => {
     });
 
     test('User can connect and view device groups', async () => {
-        // Mock the Network Requests to avoid hitting real SOTI
-        await page.route('**/MobiControl/api/devicegroups**', async route => {
-            const method = route.request().method();
-            if (method === 'GET') {
-                await route.fulfill({
-                    status: 200,
-                    contentType: 'application/json',
-                    body: JSON.stringify([
-                        { ReferenceId: 'G1', Name: 'Test Group', Path: '\\Test Group', children: [] }
-                    ])
-                });
-            } else {
-                await route.continue();
-            }
-        });
-
-        // Mock token endpoint
-        await page.route('**/MobiControl/api/token', async route => {
-            await route.fulfill({
-                status: 200,
-                contentType: 'application/json',
-                body: JSON.stringify({ access_token: 'mock-token', token_type: 'Bearer' })
-            });
+        await appPage.setMockScenario('success', {
+            groups: [{ ReferenceId: 'G1', Name: 'Test Group', Path: '\\Test Group', children: [] }]
         });
 
         // 1. Connect
@@ -50,24 +29,10 @@ test.describe('Critical User Flows', () => {
     });
 
     test('Selecting a group shows "Current Group Data" (Mocked Data)', async () => {
-        // Mock token
-        await page.route('**/MobiControl/api/token', async route => {
-            await route.fulfill({
-                status: 200,
-                body: JSON.stringify({ access_token: 'mock-token', token_type: 'Bearer' })
-            });
-        });
-
-        // Mock Group list
-        await page.route('**/MobiControl/api/devicegroups**', async route => {
-            await route.fulfill({
-                status: 200,
-                body: JSON.stringify([{ ReferenceId: 'G1', Name: 'Target Group', Path: '\\Target Group' }])
-            });
-        });
-
-        await page.route('**/customData', async route => {
-            await route.fulfill({ status: 200, body: JSON.stringify([{ Name: 'AssetTag', Value: '12345' }]) });
+        await appPage.setMockScenario('success', {
+            groups: [{ ReferenceId: 'G1', Name: 'Target Group', Path: '\\Target Group' }],
+            customDataDefinitions: [{ Name: 'AssetTag' }],
+            customAttributes: [{ Name: 'AssetTag', Value: '12345', DataType: 'String', IsInherited: false }]
         });
 
         await appPage.connectToServer('https://mock-server');
@@ -81,29 +46,8 @@ test.describe('Critical User Flows', () => {
     });
 
     test('Applying Custom Data shows success toast', async () => {
-        // Mock token
-        await page.route('**/MobiControl/api/token', async route => {
-            await route.fulfill({
-                status: 200,
-                body: JSON.stringify({ access_token: 'mock-token', token_type: 'Bearer' })
-            });
-        });
-
-        // Mock groups
-        await page.route('**/MobiControl/api/devicegroups**', async route => {
-            await route.fulfill({
-                status: 200,
-                body: JSON.stringify([{ ReferenceId: 'G1', Name: 'Target Group', Path: '\\Target Group' }])
-            });
-        });
-
-        // Mock API for applying data
-        await page.route('**/MobiControl/api/devicegroups/**/customData/**', async route => {
-            if (route.request().method() === 'PUT') {
-                await route.fulfill({ status: 200 });
-            } else {
-                await route.continue();
-            }
+        await appPage.setMockScenario('success', {
+            groups: [{ ReferenceId: 'G1', Name: 'Target Group', Path: '\\Target Group' }]
         });
 
         await appPage.connectToServer('https://mock-server');

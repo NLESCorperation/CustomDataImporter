@@ -7,7 +7,7 @@ A cross-platform Electron application for importing and managing Custom Data in 
 ## 🚀 Features
 
 - **Cross-Platform**: Runs on macOS and Windows.
-- **Easy Import**: Import custom data definitions from CSV or JSON (if implemented, otherwise mention current capability).
+- **Easy Import**: Import custom data definitions from CSV or JSON.
 - **Group Management**: Select and apply custom data to specific device groups in SOTI MobiControl.
 - **Modern UI**: Clean, responsive interface built with HTML/CSS and Electron.
 - **Secure**: Handles SOTI API authentication securely.
@@ -40,6 +40,10 @@ To run the application in development mode with hot-reloading:
 ```bash
 npm start
 ```
+
+For enterprise labs that require self-signed SOTI certificates, launch with
+`SOTI_ALLOW_INSECURE_CERTS=1 npm start`. Certificate bypass is disabled by
+default.
 
 ### Building for Production
 

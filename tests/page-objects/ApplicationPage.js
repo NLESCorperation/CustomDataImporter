@@ -7,7 +7,13 @@ class ApplicationPage {
     }
 
     async launch() {
-        this.app = await electron.launch({ args: ['.'] });
+        this.app = await electron.launch({
+            args: ['.'],
+            env: {
+                ...process.env,
+                E2E_MOCK_API: '1'
+            }
+        });
         this.page = await this.app.firstWindow();
         await this.page.waitForLoadState('domcontentloaded');
         return this.page;
@@ -21,6 +27,13 @@ class ApplicationPage {
 
     async navigateToServerTab() {
         await this.page.click('[data-tab="settings"]');
+    }
+
+    async setMockScenario(scenario, overrides = {}) {
+        await this.page.evaluate(
+            ({ scenarioName, mockOverrides }) => window.api.test.setMockScenario(scenarioName, mockOverrides),
+            { scenarioName: scenario, mockOverrides: overrides }
+        );
     }
 
     async connectToServer(url, clientId, clientSecret, username, password) {

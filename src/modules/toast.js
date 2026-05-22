@@ -12,11 +12,22 @@ function getToastIcon(type) {
 export function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    toast.innerHTML = `<span>${getToastIcon(type)}</span> ${message}`;
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+
+    const icon = document.createElement('span');
+    icon.className = 'toast-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.textContent = getToastIcon(type);
+
+    const content = document.createElement('span');
+    content.className = 'toast-message';
+    content.textContent = String(message || '');
+
+    toast.append(icon, content);
     elements.toastContainer.appendChild(toast);
 
     setTimeout(() => {
-        toast.style.animation = 'slideIn 0.3s ease-out reverse';
+        toast.classList.add('removing');
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }

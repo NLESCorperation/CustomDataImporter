@@ -10,12 +10,10 @@ test.describe('UX & Accessibility Quality Gate', () => {
         appPage = new ApplicationPage();
         page = await appPage.launch();
 
-        // Setup Mock Environment for consistent UX scanning
-        await page.route('**/MobiControl/api/devicegroups**', async route => {
-            await route.fulfill({
-                status: 200,
-                body: JSON.stringify([{ ReferenceId: 'G1', Name: 'UX Test Group', Path: '\\UX Test Group' }])
-            });
+        await appPage.setMockScenario('success', {
+            groups: [{ ReferenceId: 'G1', Name: 'UX Test Group', Path: '\\UX Test Group' }],
+            customDataDefinitions: [{ Name: 'AssetTag' }, { Name: 'DeviceConfig' }],
+            customAttributes: [{ Name: 'AssetTag', Value: '12345', DataType: 'String', IsInherited: false }]
         });
 
         await appPage.connectToServer('https://ux-test.corp', 'ux-token');

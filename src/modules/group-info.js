@@ -310,7 +310,7 @@ export async function fetchAndDisplayGroupData(groupPath) {
                                 data-attr-name="${escapeHtml(name)}"
                                 data-original-value="${escapeHtml(displayValue)}"
                                 value="${escapeHtml(displayValue)}"
-                                style="width: 100%; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--input-bg); color: var(--text-primary);"
+                                style="width: 100%; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-elevated); color: var(--text-main);"
                                 placeholder="Enter value..."
                             >
                         </td>

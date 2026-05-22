@@ -70,7 +70,6 @@ export const elements = {
 
     // Data Grid
     dataTableBody: document.getElementById('data-table-body'),
-    itemCount: document.getElementById('item-count'),
 
     // Actions
     clearAllBtn: document.getElementById('clear-all-btn'),

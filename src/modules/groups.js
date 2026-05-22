@@ -132,7 +132,9 @@ function renderGroups(groups) {
     if (!groups || groups.length === 0) {
         elements.groupList.innerHTML = `
             <div class="placeholder-message">
-                <span class="icon">📭</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 9v.906a2.25 2.25 0 0 1-1.183 1.981l-6.478 3.488a4.5 4.5 0 0 1-4.178 0l-6.478-3.488A2.25 2.25 0 0 1 2.25 9.906V9m19.5 0A2.25 2.25 0 0 0 19.5 6.75h-15A2.25 2.25 0 0 0 2.25 9m19.5 0v5.25A2.25 2.25 0 0 1 19.5 16.5h-15a2.25 2.25 0 0 1-2.25-2.25V9" />
+                </svg>
                 <p>No groups found</p>
             </div>
         `;
