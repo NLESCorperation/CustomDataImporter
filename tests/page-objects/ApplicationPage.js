@@ -19,10 +19,21 @@ class ApplicationPage {
         }
     }
 
-    async connectToServer(url, token) {
-        await this.page.getByPlaceholder('https://mobi.corp.com').fill(url);
-        await this.page.getByPlaceholder('Refresh Token').fill(token);
-        await this.page.getByRole('button', { name: 'Connect' }).click();
+    async navigateToServerTab() {
+        await this.page.click('[data-tab="settings"]');
+    }
+
+    async connectToServer(url, clientId, clientSecret, username, password) {
+        // Navigate to Server tab first
+        await this.navigateToServerTab();
+
+        await this.page.fill('#server-url', url);
+        await this.page.fill('#client-id', clientId || 'mock-client-id');
+        await this.page.fill('#client-secret', clientSecret || 'mock-client-secret');
+        await this.page.fill('#username', username || 'mock-user');
+        await this.page.fill('#password', password || 'mock-password');
+        await this.page.click('#connect-btn');
+
         // Wait for group list to appear
         await this.page.waitForSelector('.group-item', { timeout: 10000 });
     }
@@ -38,7 +49,6 @@ class ApplicationPage {
         await this.page.click('[data-tab="group-info"]');
         const table = this.page.locator('.data-table');
         await table.waitFor({ state: 'visible' });
-        // Expect at least one row or the 'No custom data' message, but not "undefined"
         const text = await table.textContent();
         return text;
     }

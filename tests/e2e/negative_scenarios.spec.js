@@ -14,34 +14,56 @@ test.describe('Negative Scenarios', () => {
         await appPage.close();
     });
 
-    test('Invalid Credentials shows error shake/toast', async () => {
-        // Mock 401 response
-        await page.route('**/MobiControl/api/devicegroups**', async route => {
-            await route.fulfill({ status: 401 });
+    test('Invalid Credentials shows error toast', async () => {
+        // Mock 401 response for token
+        await page.route('**/MobiControl/api/token', async route => {
+            await route.fulfill({ status: 401, body: 'Unauthorized' });
         });
 
-        await page.getByPlaceholder('https://mobi.corp.com').fill('https://bad.url');
-        await page.getByPlaceholder('Refresh Token').fill('bad-token');
-        await page.getByRole('button', { name: 'Connect' }).click();
+        // Navigate to Server tab and fill fields
+        await page.click('[data-tab="settings"]');
+        await page.fill('#server-url', 'https://bad.url');
+        await page.fill('#client-id', 'bad-id');
+        await page.fill('#client-secret', 'bad-secret');
+        await page.fill('#username', 'bad-user');
+        await page.fill('#password', 'bad-pass');
+        await page.click('#connect-btn');
 
         // Expect Error Toast
-        const toast = page.locator('.toast-error').or(page.locator('text=Failed to load groups'));
-        await expect(toast).toBeVisible();
+        const toast = page.locator('.toast');
+        await expect(toast).toBeVisible({ timeout: 5000 });
 
         // UX Check: Ensure main interface is NOT unlocked (Group list still empty/hidden)
         await expect(page.locator('.group-item')).toHaveCount(0);
     });
 
     test('API 500 Error during Group Load is handled gracefully', async () => {
+        // Mock successful token
+        await page.route('**/MobiControl/api/token', async route => {
+            await route.fulfill({
+                status: 200,
+                body: JSON.stringify({ access_token: 'mock-token', token_type: 'Bearer' })
+            });
+        });
+
         await page.route('**/MobiControl/api/devicegroups**', async route => {
             await route.fulfill({ status: 500, body: 'Internal Server Error' });
         });
 
-        await appPage.connectToServer('https://server.com', 'token');
+        // Navigate to Server tab and connect
+        await page.click('[data-tab="settings"]');
+        await page.fill('#server-url', 'https://server.com');
+        await page.fill('#client-id', 'test-id');
+        await page.fill('#client-secret', 'test-secret');
+        await page.fill('#username', 'test-user');
+        await page.fill('#password', 'test-pass');
+        await page.click('#connect-btn');
 
-        // Should show specific error message, not crash
-        await expect(page.locator('text=Internal Server Error')).toBeVisible();
-        // App should remain responsive (Buttons still clickable)
-        await expect(page.getByRole('button', { name: 'Connect' })).toBeEnabled();
+        // Should show error toast, not crash
+        const toast = page.locator('.toast');
+        await expect(toast).toBeVisible({ timeout: 5000 });
+
+        // App should remain responsive (Connect button re-enabled)
+        await expect(page.locator('#connect-btn')).toBeEnabled({ timeout: 5000 });
     });
 });

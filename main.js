@@ -30,14 +30,54 @@ function createWindow() {
 // ==================== SOTI API Helpers (Main Process) ====================
 // Using net.fetch from Electron to bypass CORS restrictions
 
+const DEFAULT_TIMEOUT_MS = 30000;
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        const response = await net.fetch(url, { ...options, signal: controller.signal });
+        return response;
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            throw new Error(`Request timed out after ${timeoutMs / 1000}s: ${url}`);
+        }
+        throw error;
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+function validateServerUrl(url) {
+    if (!url || typeof url !== 'string') {
+        throw new Error('Server URL is required');
+    }
+    try {
+        const parsed = new URL(url);
+        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+            throw new Error('Server URL must use HTTPS (or HTTP for local development)');
+        }
+        if (parsed.username || parsed.password) {
+            throw new Error('Server URL must not contain embedded credentials');
+        }
+        if (parsed.hash) {
+            throw new Error('Server URL must not contain a fragment');
+        }
+        return parsed.origin + parsed.pathname.replace(/\/+$/, '');
+    } catch (e) {
+        if (e.message.startsWith('Server URL')) throw e;
+        throw new Error(`Invalid server URL: ${e.message}`);
+    }
+}
+
 async function sotiRequest(url, options = {}) {
-    const response = await net.fetch(url, options);
+    const response = await fetchWithTimeout(url, options);
     const text = await response.text();
-    
+
     if (!response.ok) {
         throw new Error(`Request failed: ${response.status} - ${text}`);
     }
-    
+
     try {
         return JSON.parse(text);
     } catch {
@@ -187,12 +227,13 @@ ipcMain.handle('file:parse', async (event, filePath) => {
 // Get authentication token
 ipcMain.handle('soti:getToken', async (event, serverUrl, clientId, clientSecret, username, password) => {
     try {
-        const tokenUrl = `${serverUrl}/MobiControl/api/token`;
+        const validatedUrl = validateServerUrl(serverUrl);
+        const tokenUrl = `${validatedUrl}/MobiControl/api/token`;
         const authString = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-        
+
         console.log(`[SOTI Auth] Attempting to get token from: ${tokenUrl}`);
-        
-        const response = await net.fetch(tokenUrl, {
+
+        const response = await fetchWithTimeout(tokenUrl, {
             method: 'POST',
             headers: {
                 'Authorization': `Basic ${authString}`,
@@ -226,8 +267,8 @@ ipcMain.handle('soti:getToken', async (event, serverUrl, clientId, clientSecret,
 ipcMain.handle('soti:getGroups', async (event, serverUrl, token) => {
     try {
         const url = `${serverUrl}/MobiControl/api/devicegroups?take=1000`;
-        
-        const response = await net.fetch(url, {
+
+        const response = await fetchWithTimeout(url, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -250,8 +291,8 @@ ipcMain.handle('soti:getGroups', async (event, serverUrl, token) => {
 ipcMain.handle('soti:getCustomAttributes', async (event, serverUrl, token) => {
     try {
         const url = `${serverUrl}/MobiControl/api/customAttributes?take=1000`;
-        
-        const response = await net.fetch(url, {
+
+        const response = await fetchWithTimeout(url, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -276,15 +317,15 @@ ipcMain.handle('soti:getGroupCustomData', async (event, serverUrl, token, groupP
         const encodedPath = encodeURIComponent(groupPath);
         const url = `${serverUrl}/MobiControl/api/devicegroups/${encodedPath}/customAttributes`;
         
-        const response = await net.fetch(url, {
+        const response = await fetchWithTimeout(url, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
-        
+
         const text = await response.text();
-        
+
         if (!response.ok) {
             throw new Error(`Failed to fetch group data: ${response.status}`);
         }
@@ -299,8 +340,8 @@ ipcMain.handle('soti:getGroupCustomData', async (event, serverUrl, token, groupP
 ipcMain.handle('soti:createCustomAttribute', async (event, serverUrl, token, attributeData) => {
     try {
         const url = `${serverUrl}/MobiControl/api/customAttributes`;
-        
-        const response = await net.fetch(url, {
+
+        const response = await fetchWithTimeout(url, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -332,7 +373,7 @@ ipcMain.handle('soti:setGroupCustomAttribute', async (event, serverUrl, token, g
             Value: value
         }];
         
-        const response = await net.fetch(url, {
+        const response = await fetchWithTimeout(url, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -340,7 +381,7 @@ ipcMain.handle('soti:setGroupCustomAttribute', async (event, serverUrl, token, g
             },
             body: JSON.stringify(payload)
         });
-        
+
         if (!response.ok) {
             const text = await response.text();
             throw new Error(`Failed to set attribute: ${response.status} - ${text}`);
@@ -371,13 +412,13 @@ ipcMain.handle('soti:request', async (event, serverUrl, token, endpoint, method 
             options.body = typeof body === 'string' ? body : JSON.stringify(body);
         }
         
-        const response = await net.fetch(url, options);
+        const response = await fetchWithTimeout(url, options);
         const text = await response.text();
-        
+
         if (!response.ok) {
             throw new Error(`Request failed: ${response.status} - ${text}`);
         }
-        
+
         try {
             return { success: true, data: JSON.parse(text) };
         } catch {

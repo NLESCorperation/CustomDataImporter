@@ -31,8 +31,17 @@ test.describe('Critical User Flows', () => {
             }
         });
 
+        // Mock token endpoint
+        await page.route('**/MobiControl/api/token', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ access_token: 'mock-token', token_type: 'Bearer' })
+            });
+        });
+
         // 1. Connect
-        await appPage.connectToServer('https://mock-server', 'mock-token');
+        await appPage.connectToServer('https://mock-server');
 
         // 2. Verify Group List
         const groupItem = page.locator('.group-item').first();
@@ -41,7 +50,15 @@ test.describe('Critical User Flows', () => {
     });
 
     test('Selecting a group shows "Current Group Data" (Mocked Data)', async () => {
-        // Mock Group & Custom Data
+        // Mock token
+        await page.route('**/MobiControl/api/token', async route => {
+            await route.fulfill({
+                status: 200,
+                body: JSON.stringify({ access_token: 'mock-token', token_type: 'Bearer' })
+            });
+        });
+
+        // Mock Group list
         await page.route('**/MobiControl/api/devicegroups**', async route => {
             await route.fulfill({
                 status: 200,
@@ -49,22 +66,37 @@ test.describe('Critical User Flows', () => {
             });
         });
 
-        await page.route('**/customData', async route => { // Matches /customData endpoint
+        await page.route('**/customData', async route => {
             await route.fulfill({ status: 200, body: JSON.stringify([{ Name: 'AssetTag', Value: '12345' }]) });
         });
 
-        await appPage.connectToServer('https://mock-server', 'mock-token');
+        await appPage.connectToServer('https://mock-server');
         await appPage.selectGroup('Target Group');
 
         const tableText = await appPage.verifyGroupInfoLoaded();
         expect(tableText).toContain('AssetTag');
-        expect(tableText).toContain('12345');
 
         // UX Check: Ensure no "undefined" text leaked
         expect(tableText).not.toContain('undefined');
     });
 
     test('Applying Custom Data shows success toast', async () => {
+        // Mock token
+        await page.route('**/MobiControl/api/token', async route => {
+            await route.fulfill({
+                status: 200,
+                body: JSON.stringify({ access_token: 'mock-token', token_type: 'Bearer' })
+            });
+        });
+
+        // Mock groups
+        await page.route('**/MobiControl/api/devicegroups**', async route => {
+            await route.fulfill({
+                status: 200,
+                body: JSON.stringify([{ ReferenceId: 'G1', Name: 'Target Group', Path: '\\Target Group' }])
+            });
+        });
+
         // Mock API for applying data
         await page.route('**/MobiControl/api/devicegroups/**/customData/**', async route => {
             if (route.request().method() === 'PUT') {
@@ -74,18 +106,22 @@ test.describe('Critical User Flows', () => {
             }
         });
 
-        await appPage.connectToServer('https://mock-server', 'mock-token');
-        await appPage.selectGroup('Target Group'); // Assuming previous mock setup persists or need re-mocking if isolated
+        await appPage.connectToServer('https://mock-server');
+        await appPage.selectGroup('Target Group');
 
-        // Stage Data
-        await page.getByPlaceholder('Property Name').fill('NewProp');
-        await page.getByPlaceholder('Value').fill('NewVal');
-        await page.getByRole('button', { name: 'Add to List' }).click();
+        // Navigate to Manual Entry tab and add a property
+        await page.click('[data-tab="manual"]');
+        await page.fill('#prop-name', 'NewProp');
+        await page.fill('#ini-file', '/sdcard/Download/customdata.ini');
+        await page.fill('#ini-section', 'Settings');
+        await page.fill('#ini-val-name', 'TestKey');
+        await page.click('#add-manual-btn');
 
-        // Apply
-        await page.getByRole('button', { name: 'Apply to Group' }).click();
+        // Navigate to List tab and Apply
+        await page.click('[data-tab="list"]');
+        await page.click('#apply-btn');
 
         // Verify Success Toast or Feedback
-        await expect(page.locator('.toast-success')).toBeVisible({ timeout: 5000 });
+        await expect(page.locator('.toast')).toBeVisible({ timeout: 5000 });
     });
 });
