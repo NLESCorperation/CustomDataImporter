@@ -49,8 +49,8 @@ describe('static application smoke checks', () => {
         });
     });
 
-    it('main process does not eagerly load native keychain bindings', () => {
-        assert.ok(!/const\s+keytar\s*=\s*require\(['"]keytar['"]\)/.test(mainProcess));
-        assert.ok(mainProcess.includes('function getKeytar()'), 'keytar should be loaded lazily');
+    it('main process does not depend on native keytar bindings', () => {
+        assert.ok(!/require\(['"]keytar['"]\)/.test(mainProcess));
+        assert.ok(mainProcess.includes('safeStorage'), 'credentials should use Electron safeStorage');
     });
 });

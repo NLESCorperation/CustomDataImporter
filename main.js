@@ -1,8 +1,8 @@
-const { app, BrowserWindow, ipcMain, dialog, net, session } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, net, session, safeStorage } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-// Service name for keytar (OS keychain)
+// Service name for OS-backed credential storage
 const SERVICE_NAME = 'SotiCustomDataImporter';
 const ALLOW_INSECURE_CERTS =
     process.env.SOTI_ALLOW_INSECURE_CERTS === '1' ||
@@ -25,18 +25,6 @@ const mockApiState = {
     ]
 };
 const mockCredentials = new Map();
-let keytar;
-
-function getKeytar() {
-    if (!keytar) {
-        try {
-            keytar = require('keytar');
-        } catch (error) {
-            throw new Error(`Secure credential storage is unavailable: ${error.message}`);
-        }
-    }
-    return keytar;
-}
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -132,6 +120,42 @@ function validateHttpMethod(method = 'GET') {
         throw new Error(`Unsupported HTTP method: ${method}`);
     }
     return normalized;
+}
+
+function getCredentialStorePath() {
+    return path.join(app.getPath('userData'), `${SERVICE_NAME}-credentials.json`);
+}
+
+function readCredentialStore() {
+    try {
+        const content = fs.readFileSync(getCredentialStorePath(), 'utf8');
+        const parsed = JSON.parse(content);
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+        if (error.code === 'ENOENT') return {};
+        throw error;
+    }
+}
+
+function writeCredentialStore(store) {
+    const storePath = getCredentialStorePath();
+    fs.mkdirSync(path.dirname(storePath), { recursive: true });
+    const tmpPath = `${storePath}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(store, null, 2), { mode: 0o600 });
+    fs.renameSync(tmpPath, storePath);
+}
+
+function encryptCredentials(credentials) {
+    if (!safeStorage.isEncryptionAvailable()) {
+        throw new Error('Secure credential storage is unavailable on this system');
+    }
+    return safeStorage.encryptString(JSON.stringify(credentials)).toString('base64');
+}
+
+function decryptCredentials(encryptedValue) {
+    if (!encryptedValue) return null;
+    const decrypted = safeStorage.decryptString(Buffer.from(encryptedValue, 'base64'));
+    return JSON.parse(decrypted);
 }
 
 async function parseResponse(response, fallbackMessage = 'Request failed') {
@@ -317,14 +341,23 @@ app.on('window-all-closed', () => {
 
 // ==================== IPC Handlers ====================
 
-// Credential Management (using OS keychain via keytar)
+// Credential Management (using Electron safeStorage with OS-backed encryption)
 ipcMain.handle('credentials:save', async (event, profileName, credentials) => {
     try {
         if (E2E_MOCK_API) {
             mockCredentials.set(profileName, credentials);
             return { success: true };
         }
-        await getKeytar().setPassword(SERVICE_NAME, profileName, JSON.stringify(credentials));
+        if (!profileName || typeof profileName !== 'string') {
+            throw new Error('Profile name is required');
+        }
+        const store = readCredentialStore();
+        store[profileName] = {
+            version: 1,
+            encrypted: encryptCredentials(credentials),
+            updatedAt: new Date().toISOString()
+        };
+        writeCredentialStore(store);
         return { success: true };
     } catch (error) {
         return { success: false, error: error.message };
@@ -336,8 +369,8 @@ ipcMain.handle('credentials:get', async (event, profileName) => {
         if (E2E_MOCK_API) {
             return mockCredentials.get(profileName) || null;
         }
-        const data = await getKeytar().getPassword(SERVICE_NAME, profileName);
-        return data ? JSON.parse(data) : null;
+        const store = readCredentialStore();
+        return decryptCredentials(store[profileName]?.encrypted);
     } catch (error) {
         return null;
     }
@@ -348,8 +381,7 @@ ipcMain.handle('credentials:list', async () => {
         if (E2E_MOCK_API) {
             return Array.from(mockCredentials.keys());
         }
-        const credentials = await getKeytar().findCredentials(SERVICE_NAME);
-        return credentials.map(c => c.account);
+        return Object.keys(readCredentialStore());
     } catch (error) {
         return [];
     }
@@ -361,7 +393,9 @@ ipcMain.handle('credentials:delete', async (event, profileName) => {
             mockCredentials.delete(profileName);
             return { success: true };
         }
-        await getKeytar().deletePassword(SERVICE_NAME, profileName);
+        const store = readCredentialStore();
+        delete store[profileName];
+        writeCredentialStore(store);
         return { success: true };
     } catch (error) {
         return { success: false, error: error.message };

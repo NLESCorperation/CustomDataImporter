@@ -10,7 +10,7 @@ A cross-platform Electron application for importing and managing Custom Data in 
 - **Easy Import**: Import custom data definitions from CSV or JSON.
 - **Group Management**: Select and apply custom data to specific device groups in SOTI MobiControl.
 - **Modern UI**: Clean, responsive interface built with HTML/CSS and Electron.
-- **Secure**: Handles SOTI API authentication securely.
+- **Secure**: Stores saved SOTI API profiles with Electron safeStorage and OS-backed encryption.
 
 ## 🛠️ Prerequisites
 
@@ -52,6 +52,14 @@ Build scripts are provided for macOS and Windows in the `build/` directory.
 #### macOS
 ```bash
 npm run build:mac
+```
+
+This creates a local `.app` bundle under `dist/Mac-Apple-Silicon/` or
+`dist/Mac-Intel/`. The legacy electron-builder installer flow is still
+available with:
+
+```bash
+npm run build:mac:installer
 ```
 
 #### Windows
