@@ -54,6 +54,19 @@ export function removeDataItem(key) {
     updateApplyButton();
 }
 
+function propertyNameCellHtml(item) {
+    const displayName = item.value.description || formatKeyForDisplay(item.key);
+    const shouldShowKey = item.key && displayName !== item.key;
+    const keyMeta = shouldShowKey ? `<code class="data-key-meta">${escapeHtml(item.key)}</code>` : '';
+
+    return `
+        <div class="data-property-name">
+            <span>${escapeHtml(displayName)}</span>
+            ${keyMeta}
+        </div>
+    `;
+}
+
 export function renderDataGrid() {
     updateStagedCount();
 
@@ -80,7 +93,7 @@ export function renderDataGrid() {
         }
         return `
             <tr>
-                <td>${escapeHtml(item.value.description || formatKeyForDisplay(item.key))}</td>
+                <td>${propertyNameCellHtml(item)}</td>
                 <td><span class="badge ${item.value.type}">${item.value.type.toUpperCase()}</span></td>
                 <td>${formatValueDetails(item.value)}</td>
                 <td>${removeButtonHtml(item.key)}</td>

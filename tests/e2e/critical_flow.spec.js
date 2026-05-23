@@ -63,6 +63,7 @@ test.describe('Critical User Flows', () => {
 
         // Navigate to List tab and Apply
         await page.click('[data-tab="list"]');
+        await expect(page.locator('#data-table-body')).toContainText('NewProp');
         await page.click('#apply-btn');
 
         // Verify Success Toast or Feedback

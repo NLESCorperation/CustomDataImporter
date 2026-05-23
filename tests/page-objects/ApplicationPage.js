@@ -21,7 +21,43 @@ class ApplicationPage {
 
     async close() {
         if (this.app) {
-            await this.app.close();
+            const app = this.app;
+            const childProcess = typeof app.process === 'function' ? app.process() : null;
+            this.app = null;
+            this.page = null;
+
+            try {
+                await Promise.race([
+                    app.evaluate(({ app }) => app.quit()),
+                    new Promise((_, reject) => {
+                        setTimeout(() => reject(new Error('Electron app quit timed out')), 3000);
+                    })
+                ]);
+                await Promise.race([
+                    app.close(),
+                    new Promise((_, reject) => {
+                        setTimeout(() => reject(new Error('Electron app close timed out')), 3000);
+                    })
+                ]);
+            } catch (error) {
+                if (childProcess && !childProcess.killed) {
+                    childProcess.kill('SIGTERM');
+                }
+                await new Promise(resolve => {
+                    if (!childProcess || childProcess.killed) {
+                        resolve();
+                        return;
+                    }
+                    const timer = setTimeout(resolve, 1000);
+                    childProcess.once('exit', () => {
+                        clearTimeout(timer);
+                        resolve();
+                    });
+                });
+                if (childProcess && !childProcess.killed) {
+                    childProcess.kill('SIGKILL');
+                }
+            }
         }
     }
 

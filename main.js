@@ -352,7 +352,7 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
 });
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit();
+    if (process.platform !== 'darwin' || E2E_MOCK_API) app.quit();
 });
 
 // ==================== IPC Handlers ====================

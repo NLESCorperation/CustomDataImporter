@@ -24,7 +24,12 @@ function toPascalCase(str) {
 }
 
 function formatKeyForDisplay(key) {
-    return key.replace(/([a-z])([A-Z])/g, '$1 $2');
+    return key
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/([a-z])(\d+)/g, (match, letter, digits, offset, text) => {
+            const prefix = text.slice(Math.max(0, offset - 2), offset + 1);
+            return /^IPv$/i.test(prefix) ? match : `${letter} ${digits}`;
+        });
 }
 
 describe('fixServerUrl', () => {
@@ -80,5 +85,11 @@ describe('formatKeyForDisplay', () => {
 
     it('should handle consecutive capitals', () => {
         assert.strictEqual(formatKeyForDisplay('getHTTPResponse'), 'get HTTPResponse');
+    });
+
+    it('should separate trailing numeric suffixes without splitting IPv versions', () => {
+        assert.strictEqual(formatKeyForDisplay('PingTarget10'), 'Ping Target 10');
+        assert.strictEqual(formatKeyForDisplay('LoadAvg1m'), 'Load Avg 1m');
+        assert.strictEqual(formatKeyForDisplay('GatewayIPv4'), 'Gateway IPv4');
     });
 });

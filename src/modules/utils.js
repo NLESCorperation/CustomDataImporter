@@ -7,7 +7,12 @@ export function escapeHtml(text) {
 }
 
 export function formatKeyForDisplay(key) {
-    return key.replace(/([a-z])([A-Z])/g, '$1 $2');
+    return key
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/([a-z])(\d+)/g, (match, letter, digits, offset, text) => {
+            const prefix = text.slice(Math.max(0, offset - 2), offset + 1);
+            return /^IPv$/i.test(prefix) ? match : `${letter} ${digits}`;
+        });
 }
 
 export function toPascalCase(str) {
