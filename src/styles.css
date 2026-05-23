@@ -2,8 +2,7 @@
 
 :root {
     /* ========================================
-       Modern Apple + Stripe Design System
-       "Simplicity is the ultimate sophistication"
+       macOS Liquid Glass design system
        ======================================== */
 
     /* Primary Brand Colors - Refined Apple Blue */
@@ -28,21 +27,25 @@
     --gray-800: #1d1d1f;
     --gray-900: #000000;
 
-    /* Background Hierarchy - Light Theme with subtle gradients */
-    --bg-base: #ffffff;
-    --bg-base-gradient: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
-    --bg-surface: #f5f5f7;
-    --bg-surface-hover: #ebebed;
-    --bg-elevated: #ffffff;
-    --bg-header: rgba(251, 251, 253, 0.85);
-    --bg-glass: rgba(255, 255, 255, 0.72);
-    --bg-glass-strong: rgba(255, 255, 255, 0.85);
+    /* Background Hierarchy - light mode system materials */
+    --bg-base: #f4f5f7;
+    --bg-base-gradient:
+        linear-gradient(140deg, #f8f9fb 0%, #edf2f6 52%, #f8f6f0 100%);
+    --bg-surface: rgba(248, 249, 251, 0.64);
+    --bg-surface-hover: rgba(255, 255, 255, 0.58);
+    --bg-elevated: rgba(255, 255, 255, 0.78);
+    --bg-header: rgba(248, 249, 251, 0.68);
+    --bg-glass: rgba(255, 255, 255, 0.48);
+    --bg-glass-strong: rgba(255, 255, 255, 0.66);
+    --bg-glass-control: rgba(255, 255, 255, 0.52);
 
     /* Border Colors - Refined for glass effect */
-    --border-color: rgba(0, 0, 0, 0.06);
-    --border-color-strong: rgba(0, 0, 0, 0.1);
-    --border-highlight: rgba(0, 0, 0, 0.14);
-    --border-glass: rgba(255, 255, 255, 0.5);
+    --border-color: rgba(30, 41, 59, 0.09);
+    --border-color-strong: rgba(30, 41, 59, 0.15);
+    --border-highlight: rgba(30, 41, 59, 0.22);
+    --border-glass: rgba(255, 255, 255, 0.58);
+    --glass-edge: rgba(255, 255, 255, 0.72);
+    --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 
     /* Text Colors - Enhanced contrast */
     --text-main: #1d1d1f;
@@ -96,9 +99,9 @@
     --shadow-focus-danger: 0 0 0 4px rgba(255, 59, 48, 0.25);
     --shadow-glow: 0 8px 32px rgba(0, 122, 255, 0.15);
     --shadow-card:
-        0 1px 1px rgba(0, 0, 0, 0.02),
-        0 2px 4px rgba(0, 0, 0, 0.02),
-        0 4px 8px rgba(0, 0, 0, 0.03);
+        0 1px 1px rgba(15, 23, 42, 0.03),
+        0 10px 34px rgba(15, 23, 42, 0.07),
+        var(--glass-inset);
     --shadow-card-hover:
         0 2px 4px rgba(0, 0, 0, 0.02),
         0 8px 16px rgba(0, 0, 0, 0.04),
@@ -176,21 +179,25 @@
     --primary-lighter: rgba(77, 163, 255, 0.07);
     --primary-glow: rgba(77, 163, 255, 0.28);
 
-    /* Background Hierarchy - Layered depth */
-    --bg-base: #000000;
-    --bg-base-gradient: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
-    --bg-surface: #161618;
-    --bg-surface-hover: #1e1e20;
-    --bg-elevated: #1c1c1e;
-    --bg-header: rgba(28, 28, 30, 0.85);
-    --bg-glass: rgba(28, 28, 30, 0.72);
-    --bg-glass-strong: rgba(28, 28, 30, 0.88);
+    /* Background Hierarchy - dark mode system materials */
+    --bg-base: #0a0b0d;
+    --bg-base-gradient:
+        linear-gradient(140deg, #131519 0%, #090b0f 52%, #16130f 100%);
+    --bg-surface: rgba(31, 33, 38, 0.64);
+    --bg-surface-hover: rgba(52, 54, 60, 0.58);
+    --bg-elevated: rgba(36, 38, 44, 0.78);
+    --bg-header: rgba(31, 33, 38, 0.64);
+    --bg-glass: rgba(32, 34, 39, 0.46);
+    --bg-glass-strong: rgba(38, 40, 46, 0.66);
+    --bg-glass-control: rgba(52, 54, 60, 0.5);
 
     /* Borders - Subtle luminosity */
-    --border-color: rgba(255, 255, 255, 0.06);
-    --border-color-strong: rgba(255, 255, 255, 0.1);
-    --border-highlight: rgba(255, 255, 255, 0.15);
-    --border-glass: rgba(255, 255, 255, 0.08);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-color-strong: rgba(255, 255, 255, 0.14);
+    --border-highlight: rgba(255, 255, 255, 0.2);
+    --border-glass: rgba(255, 255, 255, 0.12);
+    --glass-edge: rgba(255, 255, 255, 0.16);
+    --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     /* Text - Refined for dark */
     --text-main: #f5f5f7;
@@ -2885,5 +2892,471 @@ select.input-error {
     .tab {
         font-size: 11px;
         padding: 6px 10px;
+    }
+}
+
+/* ==================== macOS Liquid Glass Refresh ==================== */
+
+body {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0) 42%),
+        var(--bg-base-gradient);
+    isolation: isolate;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.22), transparent 24%, rgba(23, 105, 170, 0.06) 58%, transparent 100%),
+        linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.035) 100%);
+}
+
+[data-theme="dark"] body::before {
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 24%, rgba(77, 163, 255, 0.06) 58%, transparent 100%),
+        linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+#sidebar,
+.card,
+.connection-status,
+.tabs,
+.predefined-picker-section,
+.data-table-container,
+.modal,
+.toast,
+.status-bar,
+.ini-config-section,
+.android-restriction-banner {
+    backdrop-filter: blur(var(--blur-lg)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(180%);
+}
+
+#sidebar {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 34%),
+        var(--bg-glass);
+    border-right: 1px solid var(--border-color);
+    box-shadow:
+        1px 0 0 var(--glass-edge),
+        10px 0 34px rgba(15, 23, 42, 0.08);
+}
+
+#sidebar::before {
+    background:
+        linear-gradient(90deg, var(--glass-edge), transparent 26%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 46%, rgba(0, 0, 0, 0.025));
+}
+
+[data-theme="dark"] #sidebar {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 34%),
+        var(--bg-glass);
+    box-shadow:
+        1px 0 0 var(--glass-edge),
+        10px 0 34px rgba(0, 0, 0, 0.34);
+}
+
+[data-theme="dark"] #sidebar::before {
+    background:
+        linear-gradient(90deg, var(--glass-edge), transparent 26%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 48%, rgba(0, 0, 0, 0.18));
+}
+
+#sidebar-resizer:hover,
+#sidebar-resizer.resizing {
+    background: rgba(23, 105, 170, 0.58);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+#main {
+    background: transparent;
+}
+
+#main > .header-row {
+    align-items: center;
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.title-group h1 {
+    max-width: 980px;
+    font-size: clamp(28px, 3.5vw, var(--font-size-4xl));
+    background: linear-gradient(135deg, var(--text-main) 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.title-group .subtitle {
+    color: var(--text-secondary);
+}
+
+.search-container,
+.selection-toolbar,
+.settings-menu,
+.sidebar-footer {
+    position: relative;
+    z-index: 1;
+}
+
+#group-search,
+input,
+select,
+textarea,
+.picker-search {
+    background: var(--bg-glass-control);
+    border-color: var(--border-color);
+    box-shadow:
+        var(--glass-inset),
+        0 1px 2px rgba(15, 23, 42, 0.04);
+    backdrop-filter: blur(var(--blur-sm)) saturate(150%);
+    -webkit-backdrop-filter: blur(var(--blur-sm)) saturate(150%);
+}
+
+#group-search:hover,
+input:hover,
+select:hover,
+textarea:hover,
+.picker-search:hover {
+    background: var(--bg-elevated);
+    border-color: var(--border-color-strong);
+}
+
+#group-search:focus,
+input:focus,
+select:focus,
+textarea:focus,
+.picker-search:focus {
+    background: var(--bg-elevated);
+    border-color: var(--primary-color);
+    box-shadow:
+        var(--shadow-focus),
+        var(--glass-inset);
+}
+
+.selection-count,
+.theme-selector-container,
+.picker-section-count,
+.badge,
+.status-bar {
+    background: var(--bg-glass-control);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--glass-inset);
+}
+
+.group-item,
+.settings-menu-header,
+.theme-option,
+.picker-item,
+.picker-section-header,
+.tab {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.group-item:hover,
+.settings-menu-header:hover,
+.picker-item:hover,
+.picker-section-header:hover,
+.btn-ghost:hover {
+    background: var(--bg-surface-hover);
+}
+
+.group-item.selected,
+.group-item.selected:hover,
+.group-item.selected.viewing,
+.picker-item.selected,
+tr.selected td {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.26), transparent),
+        var(--primary-light);
+    color: var(--primary-color);
+    box-shadow: inset 0 0 0 1px rgba(23, 105, 170, 0.1);
+}
+
+.tabs {
+    background: rgba(255, 255, 255, 0.34);
+    border: 1px solid var(--border-color);
+    box-shadow:
+        var(--glass-inset),
+        0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dark"] .tabs {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.tab {
+    min-height: 42px;
+    transition-duration: 120ms;
+}
+
+.tab:hover {
+    background: var(--bg-surface-hover);
+}
+
+.tab.active {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.22)),
+        var(--bg-elevated);
+    box-shadow:
+        var(--glass-inset),
+        0 2px 8px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="dark"] .tab.active {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.035)),
+        var(--bg-elevated);
+}
+
+.card,
+.predefined-picker-section,
+.data-table-container,
+.ini-config-section {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.16)),
+        var(--bg-glass-strong);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-card);
+}
+
+.card::before {
+    background:
+        linear-gradient(120deg, var(--glass-edge), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 52%);
+}
+
+[data-theme="dark"] .card,
+[data-theme="dark"] .predefined-picker-section,
+[data-theme="dark"] .data-table-container,
+[data-theme="dark"] .ini-config-section {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015)),
+        var(--bg-glass-strong);
+}
+
+.data-table-header,
+th,
+.picker-header,
+.picker-footer {
+    background: var(--bg-glass-control);
+    backdrop-filter: blur(var(--blur-md)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--blur-md)) saturate(160%);
+}
+
+td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+tr:hover td {
+    background: var(--bg-surface-hover);
+}
+
+.btn {
+    border: 1px solid transparent;
+}
+
+.btn-primary {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 42%),
+        linear-gradient(180deg, #2188e4 0%, var(--primary-color) 100%);
+    box-shadow:
+        var(--glass-inset),
+        0 6px 16px rgba(23, 105, 170, 0.22);
+}
+
+.btn-primary:hover {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.3), transparent 42%),
+        linear-gradient(180deg, #3096f0 0%, var(--primary-hover) 100%);
+    box-shadow:
+        var(--glass-inset),
+        0 10px 24px rgba(23, 105, 170, 0.26);
+}
+
+.btn-secondary {
+    background: var(--bg-glass-control);
+    border-color: var(--border-color-strong);
+    box-shadow:
+        var(--glass-inset),
+        0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-elevated);
+    border-color: var(--border-highlight);
+}
+
+.btn-danger,
+.btn-success {
+    backdrop-filter: blur(var(--blur-sm)) saturate(150%);
+    -webkit-backdrop-filter: blur(var(--blur-sm)) saturate(150%);
+}
+
+.file-drop-zone {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent),
+        var(--bg-glass);
+    backdrop-filter: blur(var(--blur-md)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--blur-md)) saturate(160%);
+}
+
+.file-drop-zone::before {
+    background: linear-gradient(180deg, var(--primary-lighter), transparent 72%);
+}
+
+.android-restriction-banner {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent),
+        var(--primary-lighter);
+    border-color: rgba(23, 105, 170, 0.18);
+}
+
+.android-restriction-text code {
+    background: var(--bg-glass-control);
+}
+
+.toast {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.3), transparent),
+        var(--bg-glass-strong);
+    box-shadow:
+        var(--glass-inset),
+        var(--shadow-xl);
+}
+
+.toast.success,
+.toast.error,
+.toast.info,
+.toast.warning {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent),
+        var(--bg-glass-strong);
+}
+
+.modal-overlay {
+    background: rgba(15, 23, 42, 0.22);
+}
+
+[data-theme="dark"] .modal-overlay {
+    background: rgba(0, 0, 0, 0.46);
+}
+
+.modal {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.08)),
+        var(--bg-glass-strong);
+    box-shadow:
+        var(--glass-inset),
+        var(--shadow-2xl);
+}
+
+[data-theme="dark"] .modal {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.018)),
+        var(--bg-glass-strong);
+}
+
+.status-bar {
+    background: var(--bg-glass-strong);
+}
+
+.tab-content {
+    animation: contentMaterialIn 140ms ease-out;
+}
+
+@keyframes contentMaterialIn {
+    from {
+        opacity: 0.94;
+        transform: translateY(2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    #sidebar,
+    .card,
+    .connection-status,
+    .tabs,
+    .predefined-picker-section,
+    .data-table-container,
+    .modal,
+    .toast,
+    .status-bar,
+    .ini-config-section,
+    .android-restriction-banner,
+    input,
+    select,
+    textarea,
+    .picker-search {
+        background: var(--bg-elevated);
+    }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    body {
+        background: var(--bg-base);
+    }
+
+    #sidebar,
+    .card,
+    .connection-status,
+    .tabs,
+    .predefined-picker-section,
+    .data-table-container,
+    .modal,
+    .toast,
+    .status-bar,
+    .ini-config-section,
+    .android-restriction-banner,
+    input,
+    select,
+    textarea,
+    .picker-search {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: var(--bg-elevated);
+    }
+}
+
+@media (max-width: 900px) {
+    #main {
+        padding: var(--space-6);
+    }
+
+    #main > .header-row {
+        align-items: flex-start;
+    }
+
+    .tabs {
+        width: 100%;
+    }
+
+    .tab {
+        flex: 1 1 auto;
+        justify-content: center;
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 700px) {
+    #sidebar {
+        width: 220px !important;
+        min-width: 220px !important;
+        padding-left: var(--space-4);
+        padding-right: var(--space-4);
+    }
+
+    .title-group h1 {
+        font-size: 22px;
     }
 }
