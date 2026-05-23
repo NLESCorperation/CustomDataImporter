@@ -7,21 +7,22 @@ import { escapeHtml, formatKeyForDisplay } from './utils.js';
 const PREDEFINED_INI_FILE = '/sdcard/Download/customdata.ini';
 
 export const PREDEFINED_DATA = {
-    APPS: ['DefaultLauncher', 'PlayServicesVersion', 'WebViewVersion'],
-    BATTERY: ['BatteryCurrent', 'BatteryCycleCount', 'BatteryHealth', 'BatteryPlugType', 'BatteryStatus', 'BatteryTemperature', 'BatteryVoltage'],
-    BLUETOOTH: ['BluetoothConnectedDevices', 'BluetoothMacAddress', 'BluetoothPairedDevices', 'BluetoothScanMode', 'BluetoothState'],
-    CELLULAR: ['CellBand', 'CellCarrier', 'CellLAC', 'CellMCC', 'CellMNC', 'CellNetType', 'CellRSRP', 'CellRSRQ', 'CellRadio', 'CellSINR', 'CellSignal', 'CellTower', 'CellTowerId'],
-    DEVICE: ['CpuArchitecture', 'DistanceToAP', 'DropEventsToday', 'LastUpdated', 'LowMemoryThreshold', 'NTPServer', 'NfcStatus', 'ProcessorCount', 'USBAccessories', 'USBConnected', 'WakeGestureEnabled'],
-    DISPLAY: ['AutoRotate', 'FontScale', 'RefreshRate', 'ScreenBrightness', 'ScreenDensity', 'ScreenLockStatus', 'ScreenResolution', 'ScreenTimeout', 'UserRotation'],
-    GPS: ['GpsStatus', 'LocationMode', 'MockLocation'],
-    NETWORK: ['APN', 'BSSID', 'DNS', 'GatewayIPv4', 'GatewayIPv6', 'HiddenSSID', 'LinkSpeed', 'LocalIP', 'MacRandomization', 'NetworkConnectionType', 'NetworkSignalStrength', 'PreferredNetworkMode', 'PrivateDnsMode', 'PublicIP', 'RoamingStatus', 'SavedSSIDs', 'SubnetMask', 'TetheringBluetooth', 'TetheringEthernet', 'TetheringHotspot', 'TetheringUSB', 'VPNActive', 'VpnServerAddress', 'WifiBand', 'WifiChannel', 'WifiFrequency', 'WifiMaxDhcpRetryCount', 'WifiRssi', 'WifiRxLinkSpeed', 'WifiSSID', 'WifiStandard', 'WifiStatus', 'WifiTxLinkSpeed'],
-    OS: ['ActiveKeyboard', 'AutoTimeEnabled', 'AutoTimeZone', 'BuildFingerprint', 'CurrentTimeZone', 'EnabledKeyboards', 'LastRebootReason', 'LastRebootTime', 'LocaleList', 'SystemUptime', 'TimeFormat'],
-    PING_CONNECTIONS: ['PingTarget1', 'PingTarget2', 'PingTarget3'],
-    RAM: ['RamTotal', 'RamUsageProcent', 'RamUseage'],
-    SECURITY: ['BootloaderStatus', 'DeveloperOptions', 'PlayIntegrityStatus', 'SecureElement', 'UnknownSources', 'UsbDebugging'],
-    SENSORS: ['CpuTemperature', 'InternalTemperature', 'ThermalStatus'],
-    STORAGE: ['EncryptionType', 'StorageHealth', 'StorageTotal', 'StorageUse', 'StorageUseProcent'],
-    VOLUME: ['MicMuted', 'RingerMode', 'VolumeAccessibility', 'VolumeAlarm', 'VolumeMusic', 'VolumeNotification', 'VolumeRing', 'VolumeVoiceCall']
+    DEVICE: ['LastUpdated', 'DistanceToAP', 'DropEventsToday', 'WakeGestureEnabled', 'NTPServer', 'NfcStatus', 'USBConnected', 'USBAccessories', 'ProcessorCount', 'CpuArchitecture', 'LowMemoryThreshold'],
+    OS: ['SystemUptime', 'LastRebootReason', 'LastRebootTime', 'TimeFormat', 'LocaleList', 'AutoTimeEnabled', 'AutoTimeZone', 'CurrentTimeZone', 'ActiveKeyboard', 'EnabledKeyboards', 'BuildFingerprint', 'ProcessCount', 'LoadAvg1m', 'KernelVersion', 'AndroidApiLevel', 'BootCount', 'DeviceLocked', 'ScreenOn', 'AdbEnabledState', 'AlwaysFinishActs'],
+    SENSORS: ['CpuTemperature', 'InternalTemperature', 'ThermalStatus', 'CameraCount', 'StepCount', 'SensorCount', 'AmbientLux', 'Proximity'],
+    RAM: ['RamUseage', 'RamTotal', 'RamUsageProcent', 'JavaHeapUsedMb', 'JavaHeapMaxMb', 'GcCount'],
+    BATTERY: ['BatteryCurrent', 'BatteryHealth', 'BatteryVoltage', 'BatteryTemperature', 'BatteryCycleCount', 'BatteryStatus', 'BatteryPlugType', 'DozeMode', 'BatterySaverActive', 'BatteryOptWhitelisted', 'BatteryCapacityMah', 'ChargeTimeMin'],
+    STORAGE: ['StorageUse', 'StorageTotal', 'StorageUseProcent', 'StorageHealth', 'EncryptionType', 'AppCacheMb', 'SystemFreeMb', 'DataFreeMb'],
+    GPS: ['MockLocation', 'LocationMode', 'GpsStatus'],
+    NETWORK: ['NetworkConnectionType', 'PublicIP', 'NetworkSignalStrength', 'WifiSSID', 'WifiStatus', 'WifiBand', 'WifiFrequency', 'WifiChannel', 'WifiStandard', 'WifiRssi', 'BSSID', 'LinkSpeed', 'WifiRxLinkSpeed', 'WifiTxLinkSpeed', 'WifiMaxDhcpRetryCount', 'DNS', 'GatewayIPv4', 'GatewayIPv6', 'MacRandomization', 'HiddenSSID', 'SavedSSIDs', 'APN', 'LocalIP', 'SubnetMask', 'VPNActive', 'VpnServerAddress', 'TetheringHotspot', 'TetheringUSB', 'TetheringBluetooth', 'TetheringEthernet', 'PreferredNetworkMode', 'PrivateDnsMode', 'RoamingStatus', 'ActiveVpnApp', 'CaptivePortal', 'NetworkProxyHttp', 'DataSaverMode', 'ImsRegistered'],
+    SECURITY: ['UsbDebugging', 'DeveloperOptions', 'UnknownSources', 'PlayIntegrityStatus', 'BootloaderStatus', 'SecureElement', 'SelinuxMode', 'VerifiedBootState', 'RootDetected', 'SecurityPatchLevel', 'CommonCriteriaMode', 'LockScreenComplexity', 'BiometricEnrolledCount', 'StrongBoxAvailable', 'KnoxSdkVersion', 'NotificationListeners', 'Screenshots'],
+    DISPLAY: ['ScreenLockStatus', 'FontScale', 'ScreenBrightness', 'ScreenTimeout', 'AutoRotate', 'UserRotation', 'RefreshRate', 'ScreenResolution', 'ScreenDensity', 'ExternalDisplayConnected', 'AnimatorScale', 'TransitionScale'],
+    APPS: ['PlayServicesVersion', 'WebViewVersion', 'DefaultLauncher', 'OurProcessImportance', 'InstalledAppCount', 'SystemAppCount', 'UserAppCount', 'DefaultBrowser', 'DefaultSmsApp', 'DefaultDialer', 'PkgInstallerVer'],
+    BLUETOOTH: ['BluetoothPairedDevices', 'BluetoothScanMode', 'BluetoothState', 'BluetoothMacAddress', 'BluetoothConnectedDevices', 'BluetoothA2dpConnected'],
+    CELLULAR: ['CellBand', 'CellCarrier', 'CellLAC', 'CellMCC', 'CellMNC', 'CellNetType', 'CellRadio', 'CellRSRP', 'CellRSRQ', 'CellSignal', 'CellSINR', 'CellTower', 'CellTowerId'],
+    VOLUME: ['RingerMode', 'MicMuted', 'VolumeMusic', 'VolumeRing', 'VolumeNotification', 'VolumeVoiceCall', 'VolumeAlarm', 'VolumeAccessibility', 'HeadsetConnected'],
+    PING_CONNECTIONS: ['PingTarget1', 'PingTarget2', 'PingTarget3', 'PingTarget4', 'PingTarget5', 'PingTarget6', 'PingTarget7', 'PingTarget8', 'PingTarget9', 'PingTarget10'],
+    MDM: ['MdmEnrolled', 'DeviceOwnerSet', 'ProfileOwnerSet', 'ManagedProfileActive', 'AppRestrictionsBundleSize', 'DeviceAdminAppsCount', 'UserRestrictionsCount', 'UserRestrictions', 'EnterpriseOwnership', 'OrgOwnedManagedProfile', 'DpmRoleHolder', 'EnrollmentSpecificId', 'DelegatedScopeCount', 'DelegatedScopes', 'OwnerLockScreenInfo', 'AppConfigManaged', 'AppRestrictionsKeys', 'ProvisionFullyManaged', 'ProvisionWorkProfile']
 };
 
 const selectedPredefinedItems = new Set();

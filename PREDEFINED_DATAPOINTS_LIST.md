@@ -1,52 +1,220 @@
 # Predefined Datapoints Reference
 
-This document lists all predefined datapoints available in the Custom Data Importer, including standard predefined datapoints and XSight Agent datapoints.
+This document is generated from `../CustomDataManager/app/src/main/java/customdatamanager/soti/mobicontrol/data/ProviderRegistry.kt` and the XSight picker in `src/modules/xsight.js`.
+
+Run `npm run sync:datapoints` after CustomDataManager adds, removes, or renames providers.
 
 ## Important Notes
 
 When adding these datapoints to SOTI MobiControl via the API:
-- **Name (Technical Identifier)**: Cannot be changed - this is the `key` field used in the API
-- **Title/Description**: Can be customized - this is the `description` field sent to the API
-- **Technical Configuration**: Cannot be changed - includes:
-  - File path (`file`)
-  - Section name (`section`)
-  - Value name (`valName`)
-  - Data type (`dataType` - always STRING)
-  - Expression (built from the above fields)
-
----
+- **Name (Technical Identifier)**: Cannot be changed - this is the `key` field used in the API.
+- **Title/Description**: Can be customized - this is the `description` field sent to the API.
+- **Technical Configuration**: Cannot be changed - includes file path, section name, value name, data type, and expression.
 
 ## Standard Predefined Datapoints
 
 **INI File:** `/sdcard/Download/customdata.ini`
 **Data Type:** STRING
 
-### APPS Section
+### DEVICE Section
 | Key | Current Title/Description | Section | Value Name |
 |-----|---------------------------|---------|------------|
-| Default Launcher | APPS - DefaultLauncher | APPS | DefaultLauncher |
-| Play Services Version | APPS - PlayServicesVersion | APPS | PlayServicesVersion |
-| WebView Version | APPS - WebViewVersion | APPS | WebViewVersion |
+| LastUpdated | DEVICE - LastUpdated | DEVICE | LastUpdated |
+| DistanceToAP | DEVICE - DistanceToAP | DEVICE | DistanceToAP |
+| DropEventsToday | DEVICE - DropEventsToday | DEVICE | DropEventsToday |
+| WakeGestureEnabled | DEVICE - WakeGestureEnabled | DEVICE | WakeGestureEnabled |
+| NTPServer | DEVICE - NTPServer | DEVICE | NTPServer |
+| NfcStatus | DEVICE - NfcStatus | DEVICE | NfcStatus |
+| USBConnected | DEVICE - USBConnected | DEVICE | USBConnected |
+| USBAccessories | DEVICE - USBAccessories | DEVICE | USBAccessories |
+| ProcessorCount | DEVICE - ProcessorCount | DEVICE | ProcessorCount |
+| CpuArchitecture | DEVICE - CpuArchitecture | DEVICE | CpuArchitecture |
+| LowMemoryThreshold | DEVICE - LowMemoryThreshold | DEVICE | LowMemoryThreshold |
+
+### OS Section
+| Key | Current Title/Description | Section | Value Name |
+|-----|---------------------------|---------|------------|
+| SystemUptime | OS - SystemUptime | OS | SystemUptime |
+| LastRebootReason | OS - LastRebootReason | OS | LastRebootReason |
+| LastRebootTime | OS - LastRebootTime | OS | LastRebootTime |
+| TimeFormat | OS - TimeFormat | OS | TimeFormat |
+| LocaleList | OS - LocaleList | OS | LocaleList |
+| AutoTimeEnabled | OS - AutoTimeEnabled | OS | AutoTimeEnabled |
+| AutoTimeZone | OS - AutoTimeZone | OS | AutoTimeZone |
+| CurrentTimeZone | OS - CurrentTimeZone | OS | CurrentTimeZone |
+| ActiveKeyboard | OS - ActiveKeyboard | OS | ActiveKeyboard |
+| EnabledKeyboards | OS - EnabledKeyboards | OS | EnabledKeyboards |
+| BuildFingerprint | OS - BuildFingerprint | OS | BuildFingerprint |
+| ProcessCount | OS - ProcessCount | OS | ProcessCount |
+| LoadAvg1m | OS - LoadAvg1m | OS | LoadAvg1m |
+| KernelVersion | OS - KernelVersion | OS | KernelVersion |
+| AndroidApiLevel | OS - AndroidApiLevel | OS | AndroidApiLevel |
+| BootCount | OS - BootCount | OS | BootCount |
+| DeviceLocked | OS - DeviceLocked | OS | DeviceLocked |
+| ScreenOn | OS - ScreenOn | OS | ScreenOn |
+| AdbEnabledState | OS - AdbEnabledState | OS | AdbEnabledState |
+| AlwaysFinishActs | OS - AlwaysFinishActs | OS | AlwaysFinishActs |
+
+### SENSORS Section
+| Key | Current Title/Description | Section | Value Name |
+|-----|---------------------------|---------|------------|
+| CpuTemperature | SENSORS - CpuTemperature | SENSORS | CpuTemperature |
+| InternalTemperature | SENSORS - InternalTemperature | SENSORS | InternalTemperature |
+| ThermalStatus | SENSORS - ThermalStatus | SENSORS | ThermalStatus |
+| CameraCount | SENSORS - CameraCount | SENSORS | CameraCount |
+| StepCount | SENSORS - StepCount | SENSORS | StepCount |
+| SensorCount | SENSORS - SensorCount | SENSORS | SensorCount |
+| AmbientLux | SENSORS - AmbientLux | SENSORS | AmbientLux |
+| Proximity | SENSORS - Proximity | SENSORS | Proximity |
+
+### RAM Section
+| Key | Current Title/Description | Section | Value Name |
+|-----|---------------------------|---------|------------|
+| RamUseage | RAM - RamUseage | RAM | RamUseage |
+| RamTotal | RAM - RamTotal | RAM | RamTotal |
+| RamUsageProcent | RAM - RamUsageProcent | RAM | RamUsageProcent |
+| JavaHeapUsedMb | RAM - JavaHeapUsedMb | RAM | JavaHeapUsedMb |
+| JavaHeapMaxMb | RAM - JavaHeapMaxMb | RAM | JavaHeapMaxMb |
+| GcCount | RAM - GcCount | RAM | GcCount |
 
 ### BATTERY Section
 | Key | Current Title/Description | Section | Value Name |
 |-----|---------------------------|---------|------------|
-| Battery Current | BATTERY - BatteryCurrent | BATTERY | BatteryCurrent |
-| Battery CycleCount | BATTERY - BatteryCycleCount | BATTERY | BatteryCycleCount |
-| Battery Health | BATTERY - BatteryHealth | BATTERY | BatteryHealth |
-| BatteryP lugType | BATTERY - BatteryPlugType | BATTERY | BatteryPlugType |
-| Battery Status | BATTERY - BatteryStatus | BATTERY | BatteryStatus |
-| Battery Temperature | BATTERY - BatteryTemperature | BATTERY | BatteryTemperature |
-| Battery Voltage | BATTERY - BatteryVoltage | BATTERY | BatteryVoltage |
+| BatteryCurrent | BATTERY - BatteryCurrent | BATTERY | BatteryCurrent |
+| BatteryHealth | BATTERY - BatteryHealth | BATTERY | BatteryHealth |
+| BatteryVoltage | BATTERY - BatteryVoltage | BATTERY | BatteryVoltage |
+| BatteryTemperature | BATTERY - BatteryTemperature | BATTERY | BatteryTemperature |
+| BatteryCycleCount | BATTERY - BatteryCycleCount | BATTERY | BatteryCycleCount |
+| BatteryStatus | BATTERY - BatteryStatus | BATTERY | BatteryStatus |
+| BatteryPlugType | BATTERY - BatteryPlugType | BATTERY | BatteryPlugType |
+| DozeMode | BATTERY - DozeMode | BATTERY | DozeMode |
+| BatterySaverActive | BATTERY - BatterySaverActive | BATTERY | BatterySaverActive |
+| BatteryOptWhitelisted | BATTERY - BatteryOptWhitelisted | BATTERY | BatteryOptWhitelisted |
+| BatteryCapacityMah | BATTERY - BatteryCapacityMah | BATTERY | BatteryCapacityMah |
+| ChargeTimeMin | BATTERY - ChargeTimeMin | BATTERY | ChargeTimeMin |
+
+### STORAGE Section
+| Key | Current Title/Description | Section | Value Name |
+|-----|---------------------------|---------|------------|
+| StorageUse | STORAGE - StorageUse | STORAGE | StorageUse |
+| StorageTotal | STORAGE - StorageTotal | STORAGE | StorageTotal |
+| StorageUseProcent | STORAGE - StorageUseProcent | STORAGE | StorageUseProcent |
+| StorageHealth | STORAGE - StorageHealth | STORAGE | StorageHealth |
+| EncryptionType | STORAGE - EncryptionType | STORAGE | EncryptionType |
+| AppCacheMb | STORAGE - AppCacheMb | STORAGE | AppCacheMb |
+| SystemFreeMb | STORAGE - SystemFreeMb | STORAGE | SystemFreeMb |
+| DataFreeMb | STORAGE - DataFreeMb | STORAGE | DataFreeMb |
+
+### GPS Section
+| Key | Current Title/Description | Section | Value Name |
+|-----|---------------------------|---------|------------|
+| MockLocation | GPS - MockLocation | GPS | MockLocation |
+| LocationMode | GPS - LocationMode | GPS | LocationMode |
+| GpsStatus | GPS - GpsStatus | GPS | GpsStatus |
+
+### NETWORK Section
+| Key | Current Title/Description | Section | Value Name |
+|-----|---------------------------|---------|------------|
+| NetworkConnectionType | NETWORK - NetworkConnectionType | NETWORK | NetworkConnectionType |
+| PublicIP | NETWORK - PublicIP | NETWORK | PublicIP |
+| NetworkSignalStrength | NETWORK - NetworkSignalStrength | NETWORK | NetworkSignalStrength |
+| WifiSSID | NETWORK - WifiSSID | NETWORK | WifiSSID |
+| WifiStatus | NETWORK - WifiStatus | NETWORK | WifiStatus |
+| WifiBand | NETWORK - WifiBand | NETWORK | WifiBand |
+| WifiFrequency | NETWORK - WifiFrequency | NETWORK | WifiFrequency |
+| WifiChannel | NETWORK - WifiChannel | NETWORK | WifiChannel |
+| WifiStandard | NETWORK - WifiStandard | NETWORK | WifiStandard |
+| WifiRssi | NETWORK - WifiRssi | NETWORK | WifiRssi |
+| BSSID | NETWORK - BSSID | NETWORK | BSSID |
+| LinkSpeed | NETWORK - LinkSpeed | NETWORK | LinkSpeed |
+| WifiRxLinkSpeed | NETWORK - WifiRxLinkSpeed | NETWORK | WifiRxLinkSpeed |
+| WifiTxLinkSpeed | NETWORK - WifiTxLinkSpeed | NETWORK | WifiTxLinkSpeed |
+| WifiMaxDhcpRetryCount | NETWORK - WifiMaxDhcpRetryCount | NETWORK | WifiMaxDhcpRetryCount |
+| DNS | NETWORK - DNS | NETWORK | DNS |
+| GatewayIPv4 | NETWORK - GatewayIPv4 | NETWORK | GatewayIPv4 |
+| GatewayIPv6 | NETWORK - GatewayIPv6 | NETWORK | GatewayIPv6 |
+| MacRandomization | NETWORK - MacRandomization | NETWORK | MacRandomization |
+| HiddenSSID | NETWORK - HiddenSSID | NETWORK | HiddenSSID |
+| SavedSSIDs | NETWORK - SavedSSIDs | NETWORK | SavedSSIDs |
+| APN | NETWORK - APN | NETWORK | APN |
+| LocalIP | NETWORK - LocalIP | NETWORK | LocalIP |
+| SubnetMask | NETWORK - SubnetMask | NETWORK | SubnetMask |
+| VPNActive | NETWORK - VPNActive | NETWORK | VPNActive |
+| VpnServerAddress | NETWORK - VpnServerAddress | NETWORK | VpnServerAddress |
+| TetheringHotspot | NETWORK - TetheringHotspot | NETWORK | TetheringHotspot |
+| TetheringUSB | NETWORK - TetheringUSB | NETWORK | TetheringUSB |
+| TetheringBluetooth | NETWORK - TetheringBluetooth | NETWORK | TetheringBluetooth |
+| TetheringEthernet | NETWORK - TetheringEthernet | NETWORK | TetheringEthernet |
+| PreferredNetworkMode | NETWORK - PreferredNetworkMode | NETWORK | PreferredNetworkMode |
+| PrivateDnsMode | NETWORK - PrivateDnsMode | NETWORK | PrivateDnsMode |
+| RoamingStatus | NETWORK - RoamingStatus | NETWORK | RoamingStatus |
+| ActiveVpnApp | NETWORK - ActiveVpnApp | NETWORK | ActiveVpnApp |
+| CaptivePortal | NETWORK - CaptivePortal | NETWORK | CaptivePortal |
+| NetworkProxyHttp | NETWORK - NetworkProxyHttp | NETWORK | NetworkProxyHttp |
+| DataSaverMode | NETWORK - DataSaverMode | NETWORK | DataSaverMode |
+| ImsRegistered | NETWORK - ImsRegistered | NETWORK | ImsRegistered |
+
+### SECURITY Section
+| Key | Current Title/Description | Section | Value Name |
+|-----|---------------------------|---------|------------|
+| UsbDebugging | SECURITY - UsbDebugging | SECURITY | UsbDebugging |
+| DeveloperOptions | SECURITY - DeveloperOptions | SECURITY | DeveloperOptions |
+| UnknownSources | SECURITY - UnknownSources | SECURITY | UnknownSources |
+| PlayIntegrityStatus | SECURITY - PlayIntegrityStatus | SECURITY | PlayIntegrityStatus |
+| BootloaderStatus | SECURITY - BootloaderStatus | SECURITY | BootloaderStatus |
+| SecureElement | SECURITY - SecureElement | SECURITY | SecureElement |
+| SelinuxMode | SECURITY - SelinuxMode | SECURITY | SelinuxMode |
+| VerifiedBootState | SECURITY - VerifiedBootState | SECURITY | VerifiedBootState |
+| RootDetected | SECURITY - RootDetected | SECURITY | RootDetected |
+| SecurityPatchLevel | SECURITY - SecurityPatchLevel | SECURITY | SecurityPatchLevel |
+| CommonCriteriaMode | SECURITY - CommonCriteriaMode | SECURITY | CommonCriteriaMode |
+| LockScreenComplexity | SECURITY - LockScreenComplexity | SECURITY | LockScreenComplexity |
+| BiometricEnrolledCount | SECURITY - BiometricEnrolledCount | SECURITY | BiometricEnrolledCount |
+| StrongBoxAvailable | SECURITY - StrongBoxAvailable | SECURITY | StrongBoxAvailable |
+| KnoxSdkVersion | SECURITY - KnoxSdkVersion | SECURITY | KnoxSdkVersion |
+| NotificationListeners | SECURITY - NotificationListeners | SECURITY | NotificationListeners |
+| Screenshots | SECURITY - Screenshots | SECURITY | Screenshots |
+
+### DISPLAY Section
+| Key | Current Title/Description | Section | Value Name |
+|-----|---------------------------|---------|------------|
+| ScreenLockStatus | DISPLAY - ScreenLockStatus | DISPLAY | ScreenLockStatus |
+| FontScale | DISPLAY - FontScale | DISPLAY | FontScale |
+| ScreenBrightness | DISPLAY - ScreenBrightness | DISPLAY | ScreenBrightness |
+| ScreenTimeout | DISPLAY - ScreenTimeout | DISPLAY | ScreenTimeout |
+| AutoRotate | DISPLAY - AutoRotate | DISPLAY | AutoRotate |
+| UserRotation | DISPLAY - UserRotation | DISPLAY | UserRotation |
+| RefreshRate | DISPLAY - RefreshRate | DISPLAY | RefreshRate |
+| ScreenResolution | DISPLAY - ScreenResolution | DISPLAY | ScreenResolution |
+| ScreenDensity | DISPLAY - ScreenDensity | DISPLAY | ScreenDensity |
+| ExternalDisplayConnected | DISPLAY - ExternalDisplayConnected | DISPLAY | ExternalDisplayConnected |
+| AnimatorScale | DISPLAY - AnimatorScale | DISPLAY | AnimatorScale |
+| TransitionScale | DISPLAY - TransitionScale | DISPLAY | TransitionScale |
+
+### APPS Section
+| Key | Current Title/Description | Section | Value Name |
+|-----|---------------------------|---------|------------|
+| PlayServicesVersion | APPS - PlayServicesVersion | APPS | PlayServicesVersion |
+| WebViewVersion | APPS - WebViewVersion | APPS | WebViewVersion |
+| DefaultLauncher | APPS - DefaultLauncher | APPS | DefaultLauncher |
+| OurProcessImportance | APPS - OurProcessImportance | APPS | OurProcessImportance |
+| InstalledAppCount | APPS - InstalledAppCount | APPS | InstalledAppCount |
+| SystemAppCount | APPS - SystemAppCount | APPS | SystemAppCount |
+| UserAppCount | APPS - UserAppCount | APPS | UserAppCount |
+| DefaultBrowser | APPS - DefaultBrowser | APPS | DefaultBrowser |
+| DefaultSmsApp | APPS - DefaultSmsApp | APPS | DefaultSmsApp |
+| DefaultDialer | APPS - DefaultDialer | APPS | DefaultDialer |
+| PkgInstallerVer | APPS - PkgInstallerVer | APPS | PkgInstallerVer |
 
 ### BLUETOOTH Section
 | Key | Current Title/Description | Section | Value Name |
 |-----|---------------------------|---------|------------|
-| Bluetooth Connected Devices | BLUETOOTH - BluetoothConnectedDevices | BLUETOOTH | BluetoothConnectedDevices |
-| BluetoothMacAddress | BLUETOOTH - BluetoothMacAddress | BLUETOOTH | BluetoothMacAddress |
 | BluetoothPairedDevices | BLUETOOTH - BluetoothPairedDevices | BLUETOOTH | BluetoothPairedDevices |
 | BluetoothScanMode | BLUETOOTH - BluetoothScanMode | BLUETOOTH | BluetoothScanMode |
 | BluetoothState | BLUETOOTH - BluetoothState | BLUETOOTH | BluetoothState |
+| BluetoothMacAddress | BLUETOOTH - BluetoothMacAddress | BLUETOOTH | BluetoothMacAddress |
+| BluetoothConnectedDevices | BLUETOOTH - BluetoothConnectedDevices | BLUETOOTH | BluetoothConnectedDevices |
+| BluetoothA2dpConnected | BLUETOOTH - BluetoothA2dpConnected | BLUETOOTH | BluetoothA2dpConnected |
 
 ### CELLULAR Section
 | Key | Current Title/Description | Section | Value Name |
@@ -57,100 +225,26 @@ When adding these datapoints to SOTI MobiControl via the API:
 | CellMCC | CELLULAR - CellMCC | CELLULAR | CellMCC |
 | CellMNC | CELLULAR - CellMNC | CELLULAR | CellMNC |
 | CellNetType | CELLULAR - CellNetType | CELLULAR | CellNetType |
+| CellRadio | CELLULAR - CellRadio | CELLULAR | CellRadio |
 | CellRSRP | CELLULAR - CellRSRP | CELLULAR | CellRSRP |
 | CellRSRQ | CELLULAR - CellRSRQ | CELLULAR | CellRSRQ |
-| CellRadio | CELLULAR - CellRadio | CELLULAR | CellRadio |
-| CellSINR | CELLULAR - CellSINR | CELLULAR | CellSINR |
 | CellSignal | CELLULAR - CellSignal | CELLULAR | CellSignal |
+| CellSINR | CELLULAR - CellSINR | CELLULAR | CellSINR |
 | CellTower | CELLULAR - CellTower | CELLULAR | CellTower |
 | CellTowerId | CELLULAR - CellTowerId | CELLULAR | CellTowerId |
 
-### DEVICE Section
+### VOLUME Section
 | Key | Current Title/Description | Section | Value Name |
 |-----|---------------------------|---------|------------|
-| CpuArchitecture | DEVICE - CpuArchitecture | DEVICE | CpuArchitecture |
-| DistanceToAP | DEVICE - DistanceToAP | DEVICE | DistanceToAP |
-| DropEventsToday | DEVICE - DropEventsToday | DEVICE | DropEventsToday |
-| LastUpdated | DEVICE - LastUpdated | DEVICE | LastUpdated |
-| LowMemoryThreshold | DEVICE - LowMemoryThreshold | DEVICE | LowMemoryThreshold |
-| NTPServer | DEVICE - NTPServer | DEVICE | NTPServer |
-| NfcStatus | DEVICE - NfcStatus | DEVICE | NfcStatus |
-| ProcessorCount | DEVICE - ProcessorCount | DEVICE | ProcessorCount |
-| USBAccessories | DEVICE - USBAccessories | DEVICE | USBAccessories |
-| USBConnected | DEVICE - USBConnected | DEVICE | USBConnected |
-| WakeGestureEnabled | DEVICE - WakeGestureEnabled | DEVICE | WakeGestureEnabled |
-
-### DISPLAY Section
-| Key | Current Title/Description | Section | Value Name |
-|-----|---------------------------|---------|------------|
-| AutoRotate | DISPLAY - AutoRotate | DISPLAY | AutoRotate |
-| FontScale | DISPLAY - FontScale | DISPLAY | FontScale |
-| RefreshRate | DISPLAY - RefreshRate | DISPLAY | RefreshRate |
-| ScreenBrightness | DISPLAY - ScreenBrightness | DISPLAY | ScreenBrightness |
-| ScreenDensity | DISPLAY - ScreenDensity | DISPLAY | ScreenDensity |
-| ScreenLockStatus | DISPLAY - ScreenLockStatus | DISPLAY | ScreenLockStatus |
-| ScreenResolution | DISPLAY - ScreenResolution | DISPLAY | ScreenResolution |
-| ScreenTimeout | DISPLAY - ScreenTimeout | DISPLAY | ScreenTimeout |
-| UserRotation | DISPLAY - UserRotation | DISPLAY | UserRotation |
-
-### GPS Section
-| Key | Current Title/Description | Section | Value Name |
-|-----|---------------------------|---------|------------|
-| GpsStatus | GPS - GpsStatus | GPS | GpsStatus |
-| LocationMode | GPS - LocationMode | GPS | LocationMode |
-| MockLocation | GPS - MockLocation | GPS | MockLocation |
-
-### NETWORK Section
-| Key | Current Title/Description | Section | Value Name |
-|-----|---------------------------|---------|------------|
-| APN | NETWORK - APN | NETWORK | APN |
-| BSSID | NETWORK - BSSID | NETWORK | BSSID |
-| DNS | NETWORK - DNS | NETWORK | DNS |
-| GatewayIPv4 | NETWORK - GatewayIPv4 | NETWORK | GatewayIPv4 |
-| GatewayIPv6 | NETWORK - GatewayIPv6 | NETWORK | GatewayIPv6 |
-| HiddenSSID | NETWORK - HiddenSSID | NETWORK | HiddenSSID |
-| LinkSpeed | NETWORK - LinkSpeed | NETWORK | LinkSpeed |
-| LocalIP | NETWORK - LocalIP | NETWORK | LocalIP |
-| MacRandomization | NETWORK - MacRandomization | NETWORK | MacRandomization |
-| NetworkConnectionType | NETWORK - NetworkConnectionType | NETWORK | NetworkConnectionType |
-| NetworkSignalStrength | NETWORK - NetworkSignalStrength | NETWORK | NetworkSignalStrength |
-| PreferredNetworkMode | NETWORK - PreferredNetworkMode | NETWORK | PreferredNetworkMode |
-| PrivateDnsMode | NETWORK - PrivateDnsMode | NETWORK | PrivateDnsMode |
-| PublicIP | NETWORK - PublicIP | NETWORK | PublicIP |
-| RoamingStatus | NETWORK - RoamingStatus | NETWORK | RoamingStatus |
-| SavedSSIDs | NETWORK - SavedSSIDs | NETWORK | SavedSSIDs |
-| SubnetMask | NETWORK - SubnetMask | NETWORK | SubnetMask |
-| TetheringBluetooth | NETWORK - TetheringBluetooth | NETWORK | TetheringBluetooth |
-| TetheringEthernet | NETWORK - TetheringEthernet | NETWORK | TetheringEthernet |
-| TetheringHotspot | NETWORK - TetheringHotspot | NETWORK | TetheringHotspot |
-| TetheringUSB | NETWORK - TetheringUSB | NETWORK | TetheringUSB |
-| VPNActive | NETWORK - VPNActive | NETWORK | VPNActive |
-| VpnServerAddress | NETWORK - VpnServerAddress | NETWORK | VpnServerAddress |
-| WifiBand | NETWORK - WifiBand | NETWORK | WifiBand |
-| WifiChannel | NETWORK - WifiChannel | NETWORK | WifiChannel |
-| WifiFrequency | NETWORK - WifiFrequency | NETWORK | WifiFrequency |
-| WifiMaxDhcpRetryCount | NETWORK - WifiMaxDhcpRetryCount | NETWORK | WifiMaxDhcpRetryCount |
-| WifiRssi | NETWORK - WifiRssi | NETWORK | WifiRssi |
-| WifiRxLinkSpeed | NETWORK - WifiRxLinkSpeed | NETWORK | WifiRxLinkSpeed |
-| WifiSSID | NETWORK - WifiSSID | NETWORK | WifiSSID |
-| WifiStandard | NETWORK - WifiStandard | NETWORK | WifiStandard |
-| WifiStatus | NETWORK - WifiStatus | NETWORK | WifiStatus |
-| WifiTxLinkSpeed | NETWORK - WifiTxLinkSpeed | NETWORK | WifiTxLinkSpeed |
-
-### OS Section
-| Key | Current Title/Description | Section | Value Name |
-|-----|---------------------------|---------|------------|
-| ActiveKeyboard | OS - ActiveKeyboard | OS | ActiveKeyboard |
-| AutoTimeEnabled | OS - AutoTimeEnabled | OS | AutoTimeEnabled |
-| AutoTimeZone | OS - AutoTimeZone | OS | AutoTimeZone |
-| BuildFingerprint | OS - BuildFingerprint | OS | BuildFingerprint |
-| CurrentTimeZone | OS - CurrentTimeZone | OS | CurrentTimeZone |
-| EnabledKeyboards | OS - EnabledKeyboards | OS | EnabledKeyboards |
-| LastRebootReason | OS - LastRebootReason | OS | LastRebootReason |
-| LastRebootTime | OS - LastRebootTime | OS | LastRebootTime |
-| LocaleList | OS - LocaleList | OS | LocaleList |
-| SystemUptime | OS - SystemUptime | OS | SystemUptime |
-| TimeFormat | OS - TimeFormat | OS | TimeFormat |
+| RingerMode | VOLUME - RingerMode | VOLUME | RingerMode |
+| MicMuted | VOLUME - MicMuted | VOLUME | MicMuted |
+| VolumeMusic | VOLUME - VolumeMusic | VOLUME | VolumeMusic |
+| VolumeRing | VOLUME - VolumeRing | VOLUME | VolumeRing |
+| VolumeNotification | VOLUME - VolumeNotification | VOLUME | VolumeNotification |
+| VolumeVoiceCall | VOLUME - VolumeVoiceCall | VOLUME | VolumeVoiceCall |
+| VolumeAlarm | VOLUME - VolumeAlarm | VOLUME | VolumeAlarm |
+| VolumeAccessibility | VOLUME - VolumeAccessibility | VOLUME | VolumeAccessibility |
+| HeadsetConnected | VOLUME - HeadsetConnected | VOLUME | HeadsetConnected |
 
 ### PING_CONNECTIONS Section
 | Key | Current Title/Description | Section | Value Name |
@@ -158,59 +252,41 @@ When adding these datapoints to SOTI MobiControl via the API:
 | PingTarget1 | PING_CONNECTIONS - PingTarget1 | PING_CONNECTIONS | PingTarget1 |
 | PingTarget2 | PING_CONNECTIONS - PingTarget2 | PING_CONNECTIONS | PingTarget2 |
 | PingTarget3 | PING_CONNECTIONS - PingTarget3 | PING_CONNECTIONS | PingTarget3 |
+| PingTarget4 | PING_CONNECTIONS - PingTarget4 | PING_CONNECTIONS | PingTarget4 |
+| PingTarget5 | PING_CONNECTIONS - PingTarget5 | PING_CONNECTIONS | PingTarget5 |
+| PingTarget6 | PING_CONNECTIONS - PingTarget6 | PING_CONNECTIONS | PingTarget6 |
+| PingTarget7 | PING_CONNECTIONS - PingTarget7 | PING_CONNECTIONS | PingTarget7 |
+| PingTarget8 | PING_CONNECTIONS - PingTarget8 | PING_CONNECTIONS | PingTarget8 |
+| PingTarget9 | PING_CONNECTIONS - PingTarget9 | PING_CONNECTIONS | PingTarget9 |
+| PingTarget10 | PING_CONNECTIONS - PingTarget10 | PING_CONNECTIONS | PingTarget10 |
 
-### RAM Section
+### MDM Section
 | Key | Current Title/Description | Section | Value Name |
 |-----|---------------------------|---------|------------|
-| RamTotal | RAM - RamTotal | RAM | RamTotal |
-| RamUsageProcent | RAM - RamUsageProcent | RAM | RamUsageProcent |
-| RamUseage | RAM - RamUseage | RAM | RamUseage |
-
-### SECURITY Section
-| Key | Current Title/Description | Section | Value Name |
-|-----|---------------------------|---------|------------|
-| BootloaderStatus | SECURITY - BootloaderStatus | SECURITY | BootloaderStatus |
-| DeveloperOptions | SECURITY - DeveloperOptions | SECURITY | DeveloperOptions |
-| PlayIntegrityStatus | SECURITY - PlayIntegrityStatus | SECURITY | PlayIntegrityStatus |
-| SecureElement | SECURITY - SecureElement | SECURITY | SecureElement |
-| UnknownSources | SECURITY - UnknownSources | SECURITY | UnknownSources |
-| UsbDebugging | SECURITY - UsbDebugging | SECURITY | UsbDebugging |
-
-### SENSORS Section
-| Key | Current Title/Description | Section | Value Name |
-|-----|---------------------------|---------|------------|
-| CpuTemperature | SENSORS - CpuTemperature | SENSORS | CpuTemperature |
-| InternalTemperature | SENSORS - InternalTemperature | SENSORS | InternalTemperature |
-| ThermalStatus | SENSORS - ThermalStatus | SENSORS | ThermalStatus |
-
-### STORAGE Section
-| Key | Current Title/Description | Section | Value Name |
-|-----|---------------------------|---------|------------|
-| EncryptionType | STORAGE - EncryptionType | STORAGE | EncryptionType |
-| StorageHealth | STORAGE - StorageHealth | STORAGE | StorageHealth |
-| StorageTotal | STORAGE - StorageTotal | STORAGE | StorageTotal |
-| StorageUse | STORAGE - StorageUse | STORAGE | StorageUse |
-| StorageUseProcent | STORAGE - StorageUseProcent | STORAGE | StorageUseProcent |
-
-### VOLUME Section
-| Key | Current Title/Description | Section | Value Name |
-|-----|---------------------------|---------|------------|
-| MicMuted | VOLUME - MicMuted | VOLUME | MicMuted |
-| RingerMode | VOLUME - RingerMode | VOLUME | RingerMode |
-| VolumeAccessibility | VOLUME - VolumeAccessibility | VOLUME | VolumeAccessibility |
-| VolumeAlarm | VOLUME - VolumeAlarm | VOLUME | VolumeAlarm |
-| VolumeMusic | VOLUME - VolumeMusic | VOLUME | VolumeMusic |
-| VolumeNotification | VOLUME - VolumeNotification | VOLUME | VolumeNotification |
-| VolumeRing | VOLUME - VolumeRing | VOLUME | VolumeRing |
-| VolumeVoiceCall | VOLUME - VolumeVoiceCall | VOLUME | VolumeVoiceCall |
-
----
+| MdmEnrolled | MDM - MdmEnrolled | MDM | MdmEnrolled |
+| DeviceOwnerSet | MDM - DeviceOwnerSet | MDM | DeviceOwnerSet |
+| ProfileOwnerSet | MDM - ProfileOwnerSet | MDM | ProfileOwnerSet |
+| ManagedProfileActive | MDM - ManagedProfileActive | MDM | ManagedProfileActive |
+| AppRestrictionsBundleSize | MDM - AppRestrictionsBundleSize | MDM | AppRestrictionsBundleSize |
+| DeviceAdminAppsCount | MDM - DeviceAdminAppsCount | MDM | DeviceAdminAppsCount |
+| UserRestrictionsCount | MDM - UserRestrictionsCount | MDM | UserRestrictionsCount |
+| UserRestrictions | MDM - UserRestrictions | MDM | UserRestrictions |
+| EnterpriseOwnership | MDM - EnterpriseOwnership | MDM | EnterpriseOwnership |
+| OrgOwnedManagedProfile | MDM - OrgOwnedManagedProfile | MDM | OrgOwnedManagedProfile |
+| DpmRoleHolder | MDM - DpmRoleHolder | MDM | DpmRoleHolder |
+| EnrollmentSpecificId | MDM - EnrollmentSpecificId | MDM | EnrollmentSpecificId |
+| DelegatedScopeCount | MDM - DelegatedScopeCount | MDM | DelegatedScopeCount |
+| DelegatedScopes | MDM - DelegatedScopes | MDM | DelegatedScopes |
+| OwnerLockScreenInfo | MDM - OwnerLockScreenInfo | MDM | OwnerLockScreenInfo |
+| AppConfigManaged | MDM - AppConfigManaged | MDM | AppConfigManaged |
+| AppRestrictionsKeys | MDM - AppRestrictionsKeys | MDM | AppRestrictionsKeys |
+| ProvisionFullyManaged | MDM - ProvisionFullyManaged | MDM | ProvisionFullyManaged |
+| ProvisionWorkProfile | MDM - ProvisionWorkProfile | MDM | ProvisionWorkProfile |
 
 ## XSight Agent Datapoints
 
-**INI File:** `/sdcard/Download/XSightReport_AllJson.ini`  
-**Data Type:** STRING  
-**Section Parsing:** Keys with dots (e.g., `configuration.collectPeriod`) are split into section and value name. Keys without dots use section `Status`.
+**INI File:** `/sdcard/Download/XSightReport_AllJson.ini`
+**Data Type:** STRING
 
 | Key | Display Name | Current Title/Description | Section | Value Name |
 |-----|--------------|---------------------------|---------|------------|
@@ -248,32 +324,29 @@ When adding these datapoints to SOTI MobiControl via the API:
 | smartSocketStatus | XSight Smart Socket Status | XSight Agent - XSight Smart Socket Status | Status | smartSocketStatus |
 | smartSocketVersion | XSight Smart Socket Version | XSight Agent - XSight Smart Socket Version | Status | smartSocketVersion |
 
----
-
 ## Summary Statistics
 
-- **Total Standard Predefined Datapoints:** 109
-- **Total XSight Agent Datapoints:** 32
-- **Total Datapoints:** 141
+- **Total Standard Predefined Datapoints:** 203
+- **Total XSight Agent Datapoints:** 33
+- **Total Datapoints:** 236
 
 ### Breakdown by Section (Standard Datapoints)
-- APPS: 3
-- BATTERY: 7
-- BLUETOOTH: 5
-- CELLULAR: 13
 - DEVICE: 11
-- DISPLAY: 9
+- OS: 20
+- SENSORS: 8
+- RAM: 6
+- BATTERY: 12
+- STORAGE: 8
 - GPS: 3
-- NETWORK: 35
-- OS: 11
-- PING_CONNECTIONS: 3
-- RAM: 3
-- SECURITY: 6
-- SENSORS: 3
-- STORAGE: 5
-- VOLUME: 8
-
----
+- NETWORK: 38
+- SECURITY: 17
+- DISPLAY: 12
+- APPS: 11
+- BLUETOOTH: 6
+- CELLULAR: 13
+- VOLUME: 9
+- PING_CONNECTIONS: 10
+- MDM: 19
 
 ## API Implementation Details
 
@@ -281,20 +354,14 @@ When a datapoint is added to SOTI MobiControl, the API request structure is:
 
 ```json
 {
-  "Name": "<key>",  // Cannot be changed - this is the technical identifier
-  "Description": "<customizable-title>",  // Can be customized - this is the "Title"
-  "PhysicalType": "String",  // Always String for CustomData
-  "DeviceFamily": "AndroidPlus",  // Device platform
+  "Name": "<key>",
+  "Description": "<customizable-title>",
+  "PhysicalType": "String",
+  "DeviceFamily": "AndroidPlus",
   "DeviceKinds": ["AndroidPlus", "AndroidElm", "AndroidForWork", "AndroidKnox"],
   "Enabled": true,
-  "Expression": "INI://<file>?SC=<section>&NM=<valName>"  // Cannot be changed - built from technical fields
+  "Expression": "INI://<file>?SC=<section>&NM=<valName>"
 }
 ```
 
-**Note:** The `Expression` field is automatically built from:
-- File path (cannot be changed)
-- Section name (cannot be changed)
-- Value name (cannot be changed)
-
 Only the `Description` field (shown as "Title" in the UI) can be customized when adding datapoints to SOTI MobiControl.
-

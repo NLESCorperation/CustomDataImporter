@@ -26,6 +26,8 @@
     "test": "npm run test:unit && npm run test:smoke",
     "test:unit": "node --test tests/unit/*.test.js",
     "test:smoke": "node --test tests/smoke/*.test.js",
+    "sync:datapoints": "node scripts/sync-customdata-manager-datapoints.js",
+    "sync:datapoints:check": "node scripts/sync-customdata-manager-datapoints.js --check",
     "test:all": "npm run test && npm run test:e2e",
     "test:e2e": "playwright test tests/e2e tests/ux",
     "test:ui": "playwright test --ui",
