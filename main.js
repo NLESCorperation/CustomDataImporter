@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog, net, session } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const keytar = require('keytar');
 
 // Service name for keytar (OS keychain)
 const SERVICE_NAME = 'SotiCustomDataImporter';
@@ -26,6 +25,18 @@ const mockApiState = {
     ]
 };
 const mockCredentials = new Map();
+let keytar;
+
+function getKeytar() {
+    if (!keytar) {
+        try {
+            keytar = require('keytar');
+        } catch (error) {
+            throw new Error(`Secure credential storage is unavailable: ${error.message}`);
+        }
+    }
+    return keytar;
+}
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -313,7 +324,7 @@ ipcMain.handle('credentials:save', async (event, profileName, credentials) => {
             mockCredentials.set(profileName, credentials);
             return { success: true };
         }
-        await keytar.setPassword(SERVICE_NAME, profileName, JSON.stringify(credentials));
+        await getKeytar().setPassword(SERVICE_NAME, profileName, JSON.stringify(credentials));
         return { success: true };
     } catch (error) {
         return { success: false, error: error.message };
@@ -325,7 +336,7 @@ ipcMain.handle('credentials:get', async (event, profileName) => {
         if (E2E_MOCK_API) {
             return mockCredentials.get(profileName) || null;
         }
-        const data = await keytar.getPassword(SERVICE_NAME, profileName);
+        const data = await getKeytar().getPassword(SERVICE_NAME, profileName);
         return data ? JSON.parse(data) : null;
     } catch (error) {
         return null;
@@ -337,7 +348,7 @@ ipcMain.handle('credentials:list', async () => {
         if (E2E_MOCK_API) {
             return Array.from(mockCredentials.keys());
         }
-        const credentials = await keytar.findCredentials(SERVICE_NAME);
+        const credentials = await getKeytar().findCredentials(SERVICE_NAME);
         return credentials.map(c => c.account);
     } catch (error) {
         return [];
@@ -350,7 +361,7 @@ ipcMain.handle('credentials:delete', async (event, profileName) => {
             mockCredentials.delete(profileName);
             return { success: true };
         }
-        await keytar.deletePassword(SERVICE_NAME, profileName);
+        await getKeytar().deletePassword(SERVICE_NAME, profileName);
         return { success: true };
     } catch (error) {
         return { success: false, error: error.message };

@@ -60,7 +60,7 @@ class ApplicationPage {
     async verifyGroupInfoLoaded() {
         // Check if the "Current Group Data" tab content is visible and not empty
         await this.page.click('[data-tab="group-info"]');
-        const table = this.page.locator('.data-table');
+        const table = this.page.locator('#group-info-table');
         await table.waitFor({ state: 'visible' });
         const text = await table.textContent();
         return text;

@@ -27,7 +27,7 @@ test.describe('Negative Scenarios', () => {
         await page.click('#connect-btn');
 
         // Expect Error Toast
-        const toast = page.locator('.toast');
+        const toast = page.locator('.toast.error');
         await expect(toast).toBeVisible({ timeout: 5000 });
 
         // UX Check: Ensure main interface is NOT unlocked (Group list still empty/hidden)
@@ -47,7 +47,7 @@ test.describe('Negative Scenarios', () => {
         await page.click('#connect-btn');
 
         // Should show error toast, not crash
-        const toast = page.locator('.toast');
+        const toast = page.locator('.toast.error');
         await expect(toast).toBeVisible({ timeout: 5000 });
 
         // App should remain responsive (Connect button re-enabled)

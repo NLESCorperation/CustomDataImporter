@@ -7,6 +7,7 @@ const rootDir = path.resolve(__dirname, '..', '..');
 const indexHtml = fs.readFileSync(path.join(rootDir, 'src', 'index.html'), 'utf8');
 const domModule = fs.readFileSync(path.join(rootDir, 'src', 'modules', 'dom.js'), 'utf8');
 const renderer = fs.readFileSync(path.join(rootDir, 'src', 'renderer.js'), 'utf8');
+const mainProcess = fs.readFileSync(path.join(rootDir, 'main.js'), 'utf8');
 
 function htmlHasId(id) {
     return new RegExp(`id=["']${id}["']`).test(indexHtml);
@@ -46,5 +47,10 @@ describe('static application smoke checks', () => {
         ].forEach(initName => {
             assert.ok(renderer.includes(`${initName}(`), `${initName} is not initialized`);
         });
+    });
+
+    it('main process does not eagerly load native keychain bindings', () => {
+        assert.ok(!/const\s+keytar\s*=\s*require\(['"]keytar['"]\)/.test(mainProcess));
+        assert.ok(mainProcess.includes('function getKeytar()'), 'keytar should be loaded lazily');
     });
 });
