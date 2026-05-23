@@ -50,6 +50,23 @@ export async function createCustomDataDefinition(serverUrl, token, definition) {
     }
 }
 
+export async function deleteCustomDataDefinition(serverUrl, token, nameOrReferenceId) {
+    const identifier = String(nameOrReferenceId || '').trim();
+    if (!identifier) {
+        throw new Error('CustomData definition name or reference ID is required');
+    }
+
+    console.log(`[SOTI API] Deleting CustomData definition: ${identifier}`);
+    try {
+        const endpoint = `/MobiControl/api/customdata/${encodeURIComponent(identifier)}`;
+        await sotiApiRequest(serverUrl, token, endpoint, 'DELETE');
+        return { deleted: true, name: identifier };
+    } catch (error) {
+        console.error(`[SOTI API] Error deleting CustomData definition "${identifier}":`, error);
+        throw error;
+    }
+}
+
 export async function ensureCustomDataDefinitionExists(serverUrl, token, item) {
     const itemType = item.value?.type?.toLowerCase();
     if (itemType === 'xml') {

@@ -80,6 +80,9 @@ if (typeof window.api === 'undefined') {
                 if (lowerEndpoint === '/mobicontrol/api/customdata') {
                     return { success: true, data: [{ Name: 'AssetTag' }, { Name: 'DeviceConfig' }] };
                 }
+                if (String(method).toUpperCase() === 'DELETE' && lowerEndpoint.startsWith('/mobicontrol/api/customdata/')) {
+                    return { success: true, data: {} };
+                }
                 if (lowerEndpoint === '/mobicontrol/api/customattributes') {
                     return { success: true, data: mockAttributes };
                 }

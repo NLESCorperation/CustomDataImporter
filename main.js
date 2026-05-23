@@ -280,6 +280,22 @@ function mockGenericSotiRequest(endpoint, method, body) {
         return { success: true, data: body };
     }
 
+    if (normalizedMethod === 'DELETE' && lowerEndpoint.startsWith('/mobicontrol/api/customdata/')) {
+        const identifier = decodeURIComponent(endpoint.split('/').pop() || '').toLowerCase();
+        const originalLength = mockApiState.customDataDefinitions.length;
+        mockApiState.customDataDefinitions = mockApiState.customDataDefinitions.filter(def => {
+            const name = String(def.Name || def.name || '').toLowerCase();
+            const referenceId = String(def.ReferenceId || def.referenceId || def.ReferenceID || def.referenceID || '').toLowerCase();
+            return name !== identifier && referenceId !== identifier;
+        });
+
+        if (mockApiState.customDataDefinitions.length === originalLength) {
+            return { success: false, error: 'Request failed: 404 - CustomData definition not found' };
+        }
+
+        return { success: true, data: {} };
+    }
+
     if (normalizedMethod === 'GET' && lowerEndpoint === '/mobicontrol/api/customattributes') {
         return { success: true, data: mockApiState.customAttributes };
     }
