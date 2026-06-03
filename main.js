@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Service name for OS-backed credential storage
+const APP_ID = 'com.soti.customdataimporter';
 const SERVICE_NAME = 'SotiCustomDataImporter';
 const ALLOW_INSECURE_CERTS =
     process.env.SOTI_ALLOW_INSECURE_CERTS === '1' ||
@@ -26,8 +27,8 @@ const mockApiState = {
 };
 const mockCredentials = new Map();
 
-function createWindow() {
-    mainWindow = new BrowserWindow({
+function getWindowOptions() {
+    const options = {
         width: 1000,
         height: 700,
         minWidth: 800,
@@ -37,10 +38,19 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
             nodeIntegration: false
-        },
-        titleBarStyle: 'hiddenInset',
-        trafficLightPosition: { x: 15, y: 15 }
-    });
+        }
+    };
+
+    if (process.platform === 'darwin') {
+        options.titleBarStyle = 'hiddenInset';
+        options.trafficLightPosition = { x: 15, y: 15 };
+    }
+
+    return options;
+}
+
+function createWindow() {
+    mainWindow = new BrowserWindow(getWindowOptions());
 
     mainWindow.loadFile('src/index.html');
 }
@@ -327,6 +337,10 @@ function mockGenericSotiRequest(endpoint, method, body) {
 }
 
 app.whenReady().then(() => {
+    if (process.platform === 'win32') {
+        app.setAppUserModelId(APP_ID);
+    }
+
     if (ALLOW_INSECURE_CERTS) {
         session.defaultSession.setCertificateVerifyProc((request, callback) => {
             console.warn(`[Certificate] Allowing certificate for ${request.hostname}`);

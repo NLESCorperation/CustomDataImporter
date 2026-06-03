@@ -13,6 +13,10 @@
   },
   "homepage": "https://github.com/yannickweijenberg/CustomDataImporter#readme",
   "main": "main.js",
+  "engines": {
+    "node": ">=18",
+    "npm": ">=9"
+  },
   "devDependencies": {
     "@axe-core/playwright": "^4.8.0",
     "@playwright/test": "^1.40.0",
@@ -31,15 +35,17 @@
     "test:all": "npm run test && npm run test:e2e",
     "test:e2e": "playwright test tests/e2e tests/ux",
     "test:ui": "playwright test --ui",
-    "build": "npm run build:mac",
+    "build": "node build/build-current.js",
     "build:mac": "node build/build-mac.js",
-    "build:mac:installer": "electron-builder --mac && node build/post-build.js",
-    "build:win": "electron-builder --win && node build/post-build.js",
+    "build:mac:installer": "electron-builder --mac && npm run build:postprocess",
+    "build:win": "electron-builder --win --x64 && npm run build:postprocess",
+    "build:win:dir": "electron-builder --win --x64 --dir && npm run build:postprocess",
     "build:linux": "electron-builder --linux",
-    "postbuild": "node build/post-build.js",
-    "watch": "chokidar \"src/**/*\" \"main.js\" \"preload.js\" -c \"npm run build:mac\" --initial",
+    "build:icons": "node build/generate-icons.js",
+    "build:postprocess": "node build/post-build.js",
+    "watch": "chokidar \"src/**/*\" \"main.js\" \"preload.js\" -c \"npm run build\" --initial",
     "watch:mac": "chokidar \"src/**/*\" \"main.js\" \"preload.js\" -c \"npm run build:mac\" --initial",
-    "watch:win": "chokidar \"src/**/*\" \"main.js\" \"preload.js\" -c \"npm run build:win\" --initial"
+    "watch:win": "chokidar \"src/**/*\" \"main.js\" \"preload.js\" -c \"npm run build:win:dir\" --initial"
   },
   "build": {
     "appId": "com.soti.customdataimporter",

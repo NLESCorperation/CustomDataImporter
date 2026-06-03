@@ -29,5 +29,4 @@ echo ""
 echo "✅ Build complete!"
 echo "📁 Output location: dist/"
 echo ""
-echo "The .dmg installer is ready for distribution."
-
+echo "The macOS .app bundle is ready for local testing."

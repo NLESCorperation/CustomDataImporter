@@ -35,19 +35,38 @@ A cross-platform Electron application for importing and managing Custom Data in 
 
 ### Development Mode
 
-To run the application in development mode with hot-reloading:
+To run the application in development mode on macOS or Windows:
 
 ```bash
 npm start
 ```
 
 For enterprise labs that require self-signed SOTI certificates, launch with
-`SOTI_ALLOW_INSECURE_CERTS=1 npm start`. Certificate bypass is disabled by
-default.
+certificate bypass enabled. Certificate bypass is disabled by default.
+
+macOS/Linux:
+```bash
+SOTI_ALLOW_INSECURE_CERTS=1 npm start
+```
+
+Windows PowerShell:
+```powershell
+$env:SOTI_ALLOW_INSECURE_CERTS = "1"; npm start
+```
+
+Windows Command Prompt:
+```cmd
+set SOTI_ALLOW_INSECURE_CERTS=1 && npm start
+```
 
 ### Building for Production
 
 Build scripts are provided for macOS and Windows in the `build/` directory.
+
+Build for the current platform:
+```bash
+npm run build
+```
 
 #### macOS
 ```bash
@@ -67,7 +86,15 @@ npm run build:mac:installer
 npm run build:win
 ```
 
-The distributables will be available in the `dist/` folder.
+This creates a Windows x64 NSIS installer in the `dist/` folder. For a faster
+unpacked Windows smoke build, run:
+
+```bash
+npm run build:win:dir
+```
+
+CI uploads generated `dist/` folders as build artifacts. Generated installers
+and app bundles are intentionally not committed to this repository.
 
 ## 📖 Documentation
 
