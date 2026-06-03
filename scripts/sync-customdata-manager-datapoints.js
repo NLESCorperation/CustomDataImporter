@@ -166,11 +166,12 @@ function buildPredefinedData() {
 function formatPredefinedBlock(grouped) {
     const lines = ['export const PREDEFINED_DATA = {'];
     const entries = [...grouped.entries()];
+    const formatPropertyKey = key => /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(key) ? key : JSON.stringify(key);
 
     entries.forEach(([section, keys], index) => {
-        const values = keys.map(key => `'${key}'`).join(', ');
+        const values = keys.map(key => JSON.stringify(key)).join(', ');
         const suffix = index === entries.length - 1 ? '' : ',';
-        lines.push(`    ${section}: [${values}]${suffix}`);
+        lines.push(`    ${formatPropertyKey(section)}: [${values}]${suffix}`);
     });
 
     lines.push('};');

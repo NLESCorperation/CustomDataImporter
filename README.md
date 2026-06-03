@@ -75,7 +75,7 @@ npm run build:mac
 
 This creates a local `.app` bundle under `dist/Mac-Apple-Silicon/` or
 `dist/Mac-Intel/`. The legacy electron-builder installer flow is still
-available with:
+available with unsigned local artifacts:
 
 ```bash
 npm run build:mac:installer

@@ -11,6 +11,7 @@ const renderer = fs.readFileSync(path.join(rootDir, 'src', 'renderer.js'), 'utf8
 const mainProcess = fs.readFileSync(path.join(rootDir, 'main.js'), 'utf8');
 const apiModule = fs.readFileSync(path.join(rootDir, 'src', 'modules', 'api.js'), 'utf8');
 const browserCompat = fs.readFileSync(path.join(rootDir, 'src', 'modules', 'browser-compat.js'), 'utf8');
+const groupInfo = fs.readFileSync(path.join(rootDir, 'src', 'modules', 'group-info.js'), 'utf8');
 const buildCurrent = fs.readFileSync(path.join(rootDir, 'build', 'build-current.js'), 'utf8');
 
 function htmlHasId(id) {
@@ -35,6 +36,12 @@ describe('static application smoke checks', () => {
         const rendererIndex = indexHtml.indexOf('renderer.js');
         assert.ok(compatIndex > -1, 'browser compatibility shim is missing');
         assert.ok(rendererIndex > compatIndex, 'renderer should load after browser compatibility shim');
+    });
+
+    it('browser compatibility credentials stay in memory only', () => {
+        assert.ok(browserCompat.includes('const mockProfiles = new Map()'), 'browser fallback should use in-memory mock profiles');
+        assert.ok(!browserCompat.includes('localStorage.setItem'), 'browser fallback should not persist profile secrets');
+        assert.ok(!browserCompat.includes('localStorage.getItem'), 'browser fallback should not read profile secrets from persistent storage');
     });
 
     it('renderer initializes every major workflow module', () => {
@@ -94,5 +101,12 @@ describe('static application smoke checks', () => {
         assert.ok(apiModule.includes('/MobiControl/api/customdata/${encodeURIComponent(identifier)}'), 'delete helper should target the CustomData definition endpoint');
         assert.ok(mainProcess.includes("normalizedMethod === 'DELETE'"), 'Electron mock API should support DELETE smoke flows');
         assert.ok(browserCompat.includes("String(method).toUpperCase() === 'DELETE'"), 'browser mock API should support DELETE smoke flows');
+    });
+
+    it('group custom attributes are rendered without attribute-context HTML interpolation', () => {
+        assert.ok(groupInfo.includes("document.createElement('input')"), 'attribute rows should create inputs with DOM APIs');
+        assert.ok(groupInfo.includes('input.dataset.originalValue = displayValue'), 'original values should be assigned through dataset APIs');
+        assert.ok(!groupInfo.includes('data-original-value="${escapeHtml(displayValue)}"'), 'attribute values should not be interpolated into HTML strings');
+        assert.ok(!groupInfo.includes('data-attr-name="${escapeHtml(name)}"'), 'attribute names should not be interpolated into HTML strings');
     });
 });

@@ -27,36 +27,23 @@ if (typeof window.api === 'undefined') {
     const mockAttributes = [
         { Name: 'AssetTag', Value: '12345', DataType: 'String', IsInherited: false }
     ];
+    const mockProfiles = new Map();
 
     window.api = {
         credentials: {
             save: async (profileName, credentials) => {
-                const key = `profile_${profileName}`;
-                localStorage.setItem(key, JSON.stringify(credentials));
-                const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
-                if (!profiles.includes(profileName)) {
-                    profiles.push(profileName);
-                    localStorage.setItem('profiles', JSON.stringify(profiles));
-                }
+                mockProfiles.set(profileName, { ...credentials });
                 return { success: true };
             },
             get: async (profileName) => {
-                const key = `profile_${profileName}`;
-                const data = localStorage.getItem(key);
-                return data ? JSON.parse(data) : null;
+                const credentials = mockProfiles.get(profileName);
+                return credentials ? { ...credentials } : null;
             },
             list: async () => {
-                return JSON.parse(localStorage.getItem('profiles') || '[]');
+                return [...mockProfiles.keys()];
             },
             delete: async (profileName) => {
-                const key = `profile_${profileName}`;
-                localStorage.removeItem(key);
-                const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
-                const index = profiles.indexOf(profileName);
-                if (index > -1) {
-                    profiles.splice(index, 1);
-                    localStorage.setItem('profiles', JSON.stringify(profiles));
-                }
+                mockProfiles.delete(profileName);
                 return { success: true };
             }
         },

@@ -24,6 +24,9 @@
     "electron": "^42.2.0",
     "electron-builder": "^26.8.1"
   },
+  "overrides": {
+    "tmp": "^0.2.7"
+  },
   "scripts": {
     "start": "electron .",
     "dev": "electron . --enable-logging",
@@ -37,7 +40,7 @@
     "test:ui": "playwright test --ui",
     "build": "node build/build-current.js",
     "build:mac": "node build/build-mac.js",
-    "build:mac:installer": "electron-builder --mac && npm run build:postprocess",
+    "build:mac:installer": "electron-builder --mac -c.mac.identity=null && npm run build:postprocess",
     "build:win": "electron-builder --win --x64 && npm run build:postprocess",
     "build:win:dir": "electron-builder --win --x64 --dir && npm run build:postprocess",
     "build:linux": "electron-builder --linux",

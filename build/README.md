@@ -52,11 +52,12 @@ You can also run builds directly via npm:
 npm install
 
 # Build for specific platform
-npm run build         # Current platform
-npm run build:mac     # macOS local .app bundle
-npm run build:win     # Windows x64 NSIS installer
-npm run build:win:dir # Windows x64 unpacked app for smoke testing
-npm run build:linux   # Linux (.AppImage)
+npm run build               # Current platform
+npm run build:mac           # macOS local .app bundle
+npm run build:mac:installer # macOS unsigned local DMG artifacts
+npm run build:win           # Windows x64 NSIS installer
+npm run build:win:dir       # Windows x64 unpacked app for smoke testing
+npm run build:linux         # Linux (.AppImage)
 ```
 
 Windows certificate-bypass development launch commands:
@@ -75,6 +76,7 @@ set SOTI_ALLOW_INSECURE_CERTS=1 && npm start
 - **macOS → Windows**: Requires [Wine](https://wiki.winehq.org/macOS) for installer builds (`brew install --cask wine-stable`).
 - **Linux → Windows**: Works out of the box with electron-builder
 - **Windows → macOS**: Not supported (macOS requires Apple hardware for signing)
+- **Local macOS DMGs**: `npm run build:mac:installer` disables automatic signing so local builds do not fail on cloud-synced FileProvider metadata. Use an explicit electron-builder signing configuration for production releases.
 
 ## Icons
 

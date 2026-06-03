@@ -4,7 +4,6 @@ import { showToast } from './toast.js';
 import { updateStatusBar, hideStatusBar } from './status-bar.js';
 import { getCustomDataDefinitions, sotiApiRequest, getGroupCustomData, updateCustomAttributeValue } from './api.js';
 import { renderDataGrid } from './data-grid.js';
-import { escapeHtml } from './utils.js';
 
 function extractEnabledStatus(cd) {
     if (cd.enabled !== undefined) return cd.enabled === true || cd.enabled === 'true' || cd.enabled === 1;
@@ -259,8 +258,10 @@ export async function fetchAndDisplayGroupData(groupPath) {
             if (customDataDefinitions && customDataDefinitions.length > 0) {
                 customDataDefinitions.forEach(def => {
                     const tr = document.createElement('tr');
+                    const td = document.createElement('td');
                     const name = def.name || def.Name || 'Unknown';
-                    tr.innerHTML = `<td>${escapeHtml(name)}</td>`;
+                    td.textContent = name;
+                    tr.appendChild(td);
                     tableBody.appendChild(tr);
                     count++;
                 });
@@ -299,30 +300,46 @@ export async function fetchAndDisplayGroupData(groupPath) {
                     const displayValue = value !== null && value !== undefined ? String(value) : '';
                     const isInherited = attr.IsInherited || attr.isInherited || false;
 
-                    tr.innerHTML = `
-                        <td>
-                            ${escapeHtml(name)}
-                            ${isInherited ? '<span style="font-size: 10px; color: var(--text-secondary); margin-left: 4px;" title="Inherited from parent group">(inherited)</span>' : ''}
-                        </td>
-                        <td>
-                            <input type="text"
-                                class="attr-value-input"
-                                data-attr-name="${escapeHtml(name)}"
-                                data-original-value="${escapeHtml(displayValue)}"
-                                value="${escapeHtml(displayValue)}"
-                                style="width: 100%; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-elevated); color: var(--text-main);"
-                                placeholder="Enter value..."
-                            >
-                        </td>
-                        <td style="text-align: center;">
-                            <button
-                                class="btn btn-primary btn-small save-attr-btn"
-                                data-attr-name="${escapeHtml(name)}"
-                                style="padding: 4px 10px; font-size: 12px;"
-                                disabled
-                            >Save</button>
-                        </td>
-                    `;
+                    const nameCell = document.createElement('td');
+                    nameCell.appendChild(document.createTextNode(name));
+                    if (isInherited) {
+                        const inheritedBadge = document.createElement('span');
+                        inheritedBadge.style.fontSize = '10px';
+                        inheritedBadge.style.color = 'var(--text-secondary)';
+                        inheritedBadge.style.marginLeft = '4px';
+                        inheritedBadge.title = 'Inherited from parent group';
+                        inheritedBadge.textContent = '(inherited)';
+                        nameCell.appendChild(inheritedBadge);
+                    }
+
+                    const valueCell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'attr-value-input';
+                    input.dataset.attrName = name;
+                    input.dataset.originalValue = displayValue;
+                    input.value = displayValue;
+                    input.style.width = '100%';
+                    input.style.padding = '6px 8px';
+                    input.style.border = '1px solid var(--border-color)';
+                    input.style.borderRadius = 'var(--radius-sm)';
+                    input.style.background = 'var(--bg-elevated)';
+                    input.style.color = 'var(--text-main)';
+                    input.placeholder = 'Enter value...';
+                    valueCell.appendChild(input);
+
+                    const actionCell = document.createElement('td');
+                    actionCell.style.textAlign = 'center';
+                    const saveButton = document.createElement('button');
+                    saveButton.className = 'btn btn-primary btn-small save-attr-btn';
+                    saveButton.dataset.attrName = name;
+                    saveButton.style.padding = '4px 10px';
+                    saveButton.style.fontSize = '12px';
+                    saveButton.disabled = true;
+                    saveButton.textContent = 'Save';
+                    actionCell.appendChild(saveButton);
+
+                    tr.append(nameCell, valueCell, actionCell);
                     attributesTableBody.appendChild(tr);
                 });
 

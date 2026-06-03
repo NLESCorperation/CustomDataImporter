@@ -49,6 +49,17 @@ function clearCodeSignXattrs(target) {
     });
 }
 
+function signApp(target) {
+    execFileSync('codesign', ['--force', '--deep', '--sign', '-', target], {
+        stdio: 'inherit',
+        timeout: 120000
+    });
+    execFileSync('codesign', ['--verify', '--deep', '--strict', '--verbose=2', target], {
+        stdio: 'inherit',
+        timeout: 120000
+    });
+}
+
 if (!fs.existsSync(electronApp)) {
     throw new Error('Electron runtime is missing. Run npm install first.');
 }
@@ -91,19 +102,14 @@ plistBuddy(
 try {
     execFileSync('xattr', ['-cr', appOut], { stdio: 'ignore' });
     clearCodeSignXattrs(appOut);
-    execFileSync('codesign', ['--force', '--deep', '--sign', '-', appOut], {
-        stdio: 'inherit',
-        timeout: 120000
-    });
+    signApp(appOut);
 } catch (error) {
     try {
         clearCodeSignXattrs(appOut);
-        execFileSync('codesign', ['--force', '--deep', '--sign', '-', appOut], {
-            stdio: 'inherit',
-            timeout: 120000
-        });
+        signApp(appOut);
     } catch (retryError) {
         console.warn(`codesign skipped: ${retryError.message}`);
+        console.warn('If this app is under a cloud-synced FileProvider folder, move the repo to a local-only path or build a macOS installer with electron-builder for a clean signature.');
     }
 }
 
